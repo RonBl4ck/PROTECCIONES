@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Coordinación de Protecciones - Inercia y Relé por Etapa</title>
-  <meta name="description" content="Simulación interactiva paso a paso del Esquema de Rechazo de Carga (ERCMF) y Generación (ERCGF) con inercia H y tiempo de relé variables por etapa.">
+  <title>Coordinación de Protecciones - ERCMF Dinámico</title>
+  <meta name="description" content="Simulación interactiva paso a paso del Esquema de Rechazo de Carga por Mínima Frecuencia (ERCMF) con número dinámico de etapas y listo para Vercel.">
   
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -79,7 +79,7 @@
       max-width: 1500px;
       margin: 0 auto;
       display: grid;
-      grid-template-columns: 430px 1fr;
+      grid-template-columns: 400px 1fr;
       gap: 2rem;
       align-items: start;
     }
@@ -138,7 +138,7 @@
       align-items: center;
     }
 
-    .form-group input, .form-group select {
+    .form-group input {
       width: 100%;
       background: rgba(22, 27, 34, 0.5);
       border: 1px solid var(--border-color);
@@ -151,18 +151,7 @@
       transition: all 0.25s ease;
     }
 
-    .form-group select {
-      cursor: pointer;
-      appearance: none;
-      -webkit-appearance: none;
-      background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238b949e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 1rem center;
-      background-size: 1.2rem;
-      padding-right: 2.5rem;
-    }
-
-    .form-group input:focus, .form-group select:focus {
+    .form-group input:focus {
       outline: none;
       border-color: var(--border-glow);
       box-shadow: 0 0 0 3px var(--primary-glow);
@@ -182,23 +171,6 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1rem;
-    }
-
-    /* Fila de parámetros de etapa */
-    .stage-input-row input {
-      padding: 0.5rem;
-      background: rgba(22, 27, 34, 0.5);
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      color: var(--text-bright);
-      font-family: var(--font-family);
-      width: 100%;
-    }
-
-    .stage-input-row input:focus {
-      outline: none;
-      border-color: var(--border-glow);
-      box-shadow: 0 0 0 2px var(--primary-glow);
     }
 
     /* Botones */
@@ -421,8 +393,8 @@
 <body>
 
   <header>
-    <h1>Coordinación de Esquemas de Rechazo</h1>
-    <p>Simulador Dinámico Multietapa con Inercia H y Tiempo de Relé Variables (ERCMF y ERCGF)</p>
+    <h1>Coordinación de Esquemas de Rechazo de Carga</h1>
+    <p>Calculadora analítica dinámica interactiva paso a paso (ERCMF)</p>
   </header>
 
   <main class="app-container">
@@ -431,25 +403,16 @@
     <section class="card">
       <h2 class="panel-title">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
-        Estudio y Premisas
+        Premisas del Sistema
       </h2>
-
-      <!-- Selector de Modo de Simulación -->
-      <div class="form-group">
-        <label for="input-tipo-esquema" style="font-weight: 700; color: #58a6ff;">Tipo de Esquema</label>
-        <div class="input-wrapper">
-          <select id="input-tipo-esquema" onchange="cambiarTipoEsquema()">
-            <option value="carga" selected>Rechazo de Carga (Subfrecuencia - ERCMF)</option>
-            <option value="generacion">Rechazo de Generación (Sobrefrecuencia - ERCGF)</option>
-          </select>
-        </div>
-      </div>
       
       <!-- Presets de Carga Rápida -->
       <div class="presets-container" style="margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem;">
         <span style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Cargar Casos de Ejemplo</span>
-        <div id="presets-buttons-container" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-          <!-- Llenado dinámico según modo -->
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <button type="button" class="btn-preset" onclick="cargarPreset(1)" style="flex: 1; padding: 0.5rem 0.25rem; font-size: 0.78rem;">3 Etapas (Clase)</button>
+          <button type="button" class="btn-preset" onclick="cargarPreset(2)" style="flex: 1; padding: 0.5rem 0.25rem; font-size: 0.78rem;">4 Etapas</button>
+          <button type="button" class="btn-preset" onclick="cargarPreset(3)" style="flex: 1; padding: 0.5rem 0.25rem; font-size: 0.78rem;">5 Etapas (Inercia)</button>
         </div>
       </div>
 
@@ -459,6 +422,14 @@
           <div class="input-wrapper">
             <input type="number" id="input-f0" step="0.01" value="60.00" required>
             <span class="unit-badge">Hz</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="input-H">Constante de Inercia (H)</label>
+          <div class="input-wrapper">
+            <input type="number" id="input-H" step="0.01" value="3.00" required>
+            <span class="unit-badge">seg</span>
           </div>
         </div>
 
@@ -478,11 +449,20 @@
           </div>
         </div>
 
-        <div class="form-group">
-          <label for="input-tint">Tiempo Interruptor (Breaker)</label>
-          <div class="input-wrapper">
-            <input type="number" id="input-tint" step="0.01" value="0.10" required>
-            <span class="unit-badge">s</span>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label for="input-trele">Tiempo Relé</label>
+            <div class="input-wrapper">
+              <input type="number" id="input-trele" step="0.01" value="0.30" required>
+              <span class="unit-badge">s</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="input-tint">Tiempo Interruptor</label>
+            <div class="input-wrapper">
+              <input type="number" id="input-tint" step="0.01" value="0.10" required>
+              <span class="unit-badge">s</span>
+            </div>
           </div>
         </div>
 
@@ -502,9 +482,9 @@
           </div>
         </div>
 
-        <!-- Tabla/Grid dinámico de parámetros de Etapa -->
         <div class="form-group">
-          <div id="etapas-inputs-container">
+          <label>Alivio por Etapas</label>
+          <div id="alivios-container" class="form-grid-2" style="grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap: 0.5rem;">
             <!-- Llenado dinámico en JS -->
           </div>
         </div>
@@ -525,12 +505,12 @@
           <span id="formulas-arrow" style="font-size: 0.75rem; color: var(--text-muted);">▼</span>
         </button>
         <div id="formulas-content" style="display: none; padding: 1rem 0.25rem 0 0.25rem; font-size: 0.85rem; color: var(--text-main); line-height: 1.6;">
-          <p style="margin-bottom: 0.5rem;"><strong>1. Pendiente de Caída/Elevación (RoCoF):</strong></p>
+          <p style="margin-bottom: 0.5rem;"><strong>1. Pendiente de Caída (RoCoF):</strong></p>
           <div style="background: rgba(13, 17, 23, 0.6); padding: 0.5rem; border-radius: 6px; font-family: var(--font-mono); text-align: center; margin-bottom: 0.75rem; border: 1px solid var(--border-color); color: #58a6ff; font-weight: 600;">
-            df/dt = (f₀ × P) / (2Hᵢ)
+            df/dt = (f₀ × P) / (2H)
           </div>
           <p style="margin-bottom: 0.75rem; font-size: 0.8rem; color: var(--text-muted);">
-            Donde <code style="color:var(--text-bright)">f₀</code> es la frec. inicial, <code style="color:var(--text-bright)">Hᵢ</code> es la inercia activa en la etapa, y <code style="color:var(--text-bright)">P</code> es el desbalance de potencia.
+            Donde <code style="color:var(--text-bright)">f₀</code> es la frec. inicial, <code style="color:var(--text-bright)">P</code> es el déficit de potencia (ej: -0.5 para 50%), y <code style="color:var(--text-bright)">H</code> es la inercia del sistema.
           </p>
           
           <p style="margin-bottom: 0.5rem;"><strong>2. Tiempo hasta activar relé (Rᵢ):</strong></p>
@@ -538,12 +518,12 @@
             t_Rᵢ = t_ref + (f_ajuste_i - f_ref) / (df/dt)
           </div>
           
-          <p style="margin-bottom: 0.5rem;"><strong>3. Frecuencia al operar actuación (Dᵢ):</strong></p>
+          <p style="margin-bottom: 0.5rem;"><strong>3. Frecuencia al operar deslastre (Dᵢ):</strong></p>
           <div style="background: rgba(13, 17, 23, 0.6); padding: 0.5rem; border-radius: 6px; font-family: var(--font-mono); text-align: center; margin-bottom: 0.75rem; border: 1px solid var(--border-color); color: #56d364; font-weight: 600;">
             f_Dᵢ = f_ref + (df/dt) × (t_Dᵢ - t_ref)
           </div>
           <p style="font-size: 0.8rem; color: var(--text-muted);">
-            *Nota: <code style="color:var(--text-bright)">t_ref</code>, <code style="color:var(--text-bright)">f_ref</code> e <code style="color:var(--text-bright)">Hᵢ</code> se toman del punto de origen inmediatamente anterior a la izquierda.
+            *Nota: <code style="color:var(--text-bright)">t_ref</code> y <code style="color:var(--text-bright)">f_ref</code> son el tiempo y la frecuencia del punto más cercano a la izquierda.
           </p>
         </div>
       </div>
@@ -565,7 +545,7 @@
       <div id="reporte-header-container" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
         <h3 class="report-title" id="report-title-section" style="margin-bottom: 0; border-bottom: none; padding-bottom: 0;">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-          Pasos Resueltos de Simulación
+          Pasos Resueltos en Clase
         </h3>
         <button type="button" class="btn-preset" id="btn-copiar-reporte" onclick="copiarReporte()" style="width: auto; padding: 0.35rem 0.75rem; font-size: 0.8rem; display: flex; align-items: center; gap: 0.35rem;">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
@@ -579,9 +559,9 @@
         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; margin-bottom: 0.75rem;">
           <h3 class="report-title" style="margin-bottom: 0; border-bottom: none; padding-bottom: 0;">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-            Cuadro 1: AJUSTES Y PARÁMETROS
+            Cuadro 1: AJUSTES
           </h3>
-          <button type="button" class="btn-preset" onclick="exportarCSV('tabla-ajustes', 'ajustes_coordinacion_etapas.csv')" style="width: auto; padding: 0.35rem 0.75rem; font-size: 0.78rem; display: flex; align-items: center; gap: 0.35rem;">
+          <button type="button" class="btn-preset" onclick="exportarCSV('tabla-ajustes', 'ajustes_ercmf.csv')" style="width: auto; padding: 0.35rem 0.75rem; font-size: 0.78rem; display: flex; align-items: center; gap: 0.35rem;">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             Descargar CSV
           </button>
@@ -597,7 +577,7 @@
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
             Cuadro 2: RESUMEN GENERAL DEL PROCESO
           </h3>
-          <button type="button" class="btn-preset" onclick="exportarCSV('tabla-resumen', 'resumen_coordinacion_etapas.csv')" style="width: auto; padding: 0.35rem 0.75rem; font-size: 0.78rem; display: flex; align-items: center; gap: 0.35rem;">
+          <button type="button" class="btn-preset" onclick="exportarCSV('tabla-resumen', 'resumen_ercmf.csv')" style="width: auto; padding: 0.35rem 0.75rem; font-size: 0.78rem; display: flex; align-items: center; gap: 0.35rem;">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             Descargar CSV
           </button>
@@ -612,7 +592,7 @@
       <!-- Estado de Verificación -->
       <div class="status-badge valid" id="status-badge">
         <span class="status-icon" id="status-icon">✔</span>
-        <span id="status-text">Esquema válido.</span>
+        <span id="status-text">Esquema válido. (Se respeta la frecuencia mínima permisible)</span>
       </div>
     </section>
 
@@ -628,241 +608,58 @@
     let chartInstance = null;
     let calculations = null;
 
-    // Cambiar la visualización según el tipo de esquema seleccionado
-    function cambiarTipoEsquema() {
-      const tipo = document.getElementById('input-tipo-esquema').value;
-      const lblFmin = document.querySelector('label[for="input-fmin"]');
-      const lblFaj1 = document.querySelector('label[for="input-faj1"]');
-      const subtitle = document.querySelector('header p');
-      
-      if (tipo === 'carga') {
-        lblFmin.innerText = "Frecuencia Mínima Permisible";
-        lblFaj1.innerText = "Ajuste 1ª Etapa de Rechazo";
-        subtitle.innerText = "Calculadora analítica dinámica interactiva paso a paso (ERCMF)";
-        
-        document.getElementById('input-f0').value = "60.00";
-        document.getElementById('input-fmin').value = "56.00";
-        document.getElementById('input-faj1').value = "59.00";
-      } else {
-        lblFmin.innerText = "Frecuencia Máxima Permisible";
-        lblFaj1.innerText = "Ajuste 1ª Etapa de Rechazo";
-        subtitle.innerText = "Calculadora analítica dinámica interactiva paso a paso (ERCGF)";
-        
-        document.getElementById('input-f0').value = "60.00";
-        document.getElementById('input-fmin').value = "62.00";
-        document.getElementById('input-faj1').value = "61.00";
-      }
-      
-      renderPresets();
-      renderAliviosInputs();
-    }
-
-    // Cargar presets de ejemplos según el modo seleccionado
-    function renderPresets() {
-      const tipo = document.getElementById('input-tipo-esquema').value;
-      const container = document.getElementById('presets-buttons-container');
-      
-      if (tipo === 'carga') {
-        container.innerHTML = `
-          <button type="button" class="btn-preset" onclick="cargarPreset(1)" style="flex: 1; padding: 0.5rem 0.25rem; font-size: 0.78rem;">3 Etapas (Clase)</button>
-          <button type="button" class="btn-preset" onclick="cargarPreset(2)" style="flex: 1; padding: 0.5rem 0.25rem; font-size: 0.78rem;">4 Etapas</button>
-          <button type="button" class="btn-preset" onclick="cargarPreset(3)" style="flex: 1; padding: 0.5rem 0.25rem; font-size: 0.78rem;">5 Etapas (H Variable)</button>
-        `;
-      } else {
-        container.innerHTML = `
-          <button type="button" class="btn-preset" onclick="cargarPreset(4)" style="flex: 1; padding: 0.5rem 0.25rem; font-size: 0.78rem;">3 Etapas (Generación)</button>
-          <button type="button" class="btn-preset" onclick="cargarPreset(5)" style="flex: 1; padding: 0.5rem 0.25rem; font-size: 0.78rem;">4 Etapas (Generación)</button>
-          <button type="button" class="btn-preset" onclick="cargarPreset(6)" style="flex: 1; padding: 0.5rem 0.25rem; font-size: 0.78rem;">5 Etapas (H Var Gen)</button>
-        `;
-      }
-    }
-
+    // Cargar presets de ejemplos predefinidos
     function cargarPreset(type) {
-      const tipoSelect = document.getElementById('input-tipo-esquema');
-      
       if (type === 1) {
-        tipoSelect.value = 'carga';
-        cambiarTipoEsquema();
-        
         document.getElementById('input-f0').value = "60.00";
+        document.getElementById('input-H').value = "3.00";
         document.getElementById('input-fmin').value = "56.00";
         document.getElementById('input-faj1').value = "59.00";
+        document.getElementById('input-trele').value = "0.30";
         document.getElementById('input-tint').value = "0.10";
         document.getElementById('input-fintervalo').value = "0.10";
         document.getElementById('input-netapas').value = "3";
         
         renderAliviosInputs();
-        
         document.getElementById('input-alivio1').value = "10";
-        document.getElementById('input-H1').value = "3.00";
-        document.getElementById('input-trele1').value = "0.30";
-        
         document.getElementById('input-alivio2').value = "20";
-        document.getElementById('input-H2').value = "3.00";
-        document.getElementById('input-trele2').value = "0.30";
-        
         document.getElementById('input-alivio3').value = "20";
-        document.getElementById('input-H3').value = "3.00";
-        document.getElementById('input-trele3').value = "0.30";
       } else if (type === 2) {
-        tipoSelect.value = 'carga';
-        cambiarTipoEsquema();
-        
         document.getElementById('input-f0').value = "60.00";
+        document.getElementById('input-H').value = "3.00";
         document.getElementById('input-fmin').value = "56.00";
         document.getElementById('input-faj1').value = "59.00";
+        document.getElementById('input-trele').value = "0.30";
         document.getElementById('input-tint').value = "0.10";
         document.getElementById('input-fintervalo').value = "0.10";
         document.getElementById('input-netapas').value = "4";
         
         renderAliviosInputs();
-        
         document.getElementById('input-alivio1').value = "10";
-        document.getElementById('input-H1').value = "3.00";
-        document.getElementById('input-trele1').value = "0.30";
-        
         document.getElementById('input-alivio2').value = "15";
-        document.getElementById('input-H2').value = "3.00";
-        document.getElementById('input-trele2').value = "0.30";
-        
         document.getElementById('input-alivio3').value = "15";
-        document.getElementById('input-H3').value = "3.00";
-        document.getElementById('input-trele3').value = "0.30";
-        
         document.getElementById('input-alivio4').value = "20";
-        document.getElementById('input-H4').value = "3.00";
-        document.getElementById('input-trele4').value = "0.30";
       } else if (type === 3) {
-        tipoSelect.value = 'carga';
-        cambiarTipoEsquema();
-        
         document.getElementById('input-f0').value = "60.00";
+        document.getElementById('input-H').value = "5.00";
         document.getElementById('input-fmin').value = "56.00";
         document.getElementById('input-faj1').value = "59.00";
+        document.getElementById('input-trele').value = "0.30";
         document.getElementById('input-tint').value = "0.10";
         document.getElementById('input-fintervalo').value = "0.10";
         document.getElementById('input-netapas').value = "5";
         
         renderAliviosInputs();
-        
-        // Etapa 1
         document.getElementById('input-alivio1').value = "8";
-        document.getElementById('input-H1').value = "5.00";
-        document.getElementById('input-trele1').value = "0.25";
-        
-        // Etapa 2
         document.getElementById('input-alivio2').value = "12";
-        document.getElementById('input-H2').value = "4.50";
-        document.getElementById('input-trele2').value = "0.30";
-        
-        // Etapa 3
         document.getElementById('input-alivio3').value = "15";
-        document.getElementById('input-H3').value = "4.00";
-        document.getElementById('input-trele3').value = "0.35";
-        
-        // Etapa 4
         document.getElementById('input-alivio4').value = "15";
-        document.getElementById('input-H4').value = "3.50";
-        document.getElementById('input-trele4').value = "0.40";
-        
-        // Etapa 5
         document.getElementById('input-alivio5').value = "20";
-        document.getElementById('input-H5').value = "3.00";
-        document.getElementById('input-trele5').value = "0.45";
-      } else if (type === 4) {
-        tipoSelect.value = 'generacion';
-        cambiarTipoEsquema();
-        
-        document.getElementById('input-f0').value = "60.00";
-        document.getElementById('input-fmin').value = "62.00";
-        document.getElementById('input-faj1').value = "61.00";
-        document.getElementById('input-tint').value = "0.10";
-        document.getElementById('input-fintervalo').value = "0.10";
-        document.getElementById('input-netapas').value = "3";
-        
-        renderAliviosInputs();
-        
-        document.getElementById('input-alivio1').value = "10";
-        document.getElementById('input-H1').value = "3.00";
-        document.getElementById('input-trele1').value = "0.30";
-        
-        document.getElementById('input-alivio2').value = "20";
-        document.getElementById('input-H2').value = "3.00";
-        document.getElementById('input-trele2').value = "0.30";
-        
-        document.getElementById('input-alivio3').value = "20";
-        document.getElementById('input-H3').value = "3.00";
-        document.getElementById('input-trele3').value = "0.30";
-      } else if (type === 5) {
-        tipoSelect.value = 'generacion';
-        cambiarTipoEsquema();
-        
-        document.getElementById('input-f0').value = "60.00";
-        document.getElementById('input-fmin').value = "62.50";
-        document.getElementById('input-faj1').value = "61.00";
-        document.getElementById('input-tint').value = "0.10";
-        document.getElementById('input-fintervalo').value = "0.10";
-        document.getElementById('input-netapas').value = "4";
-        
-        renderAliviosInputs();
-        
-        document.getElementById('input-alivio1').value = "10";
-        document.getElementById('input-H1').value = "3.00";
-        document.getElementById('input-trele1').value = "0.30";
-        
-        document.getElementById('input-alivio2').value = "15";
-        document.getElementById('input-H2').value = "3.00";
-        document.getElementById('input-trele2').value = "0.30";
-        
-        document.getElementById('input-alivio3').value = "15";
-        document.getElementById('input-H3').value = "3.00";
-        document.getElementById('input-trele3').value = "0.30";
-        
-        document.getElementById('input-alivio4').value = "20";
-        document.getElementById('input-H4').value = "3.00";
-        document.getElementById('input-trele4').value = "0.30";
-      } else if (type === 6) {
-        tipoSelect.value = 'generacion';
-        cambiarTipoEsquema();
-        
-        document.getElementById('input-f0').value = "60.00";
-        document.getElementById('input-fmin').value = "63.00";
-        document.getElementById('input-faj1').value = "61.00";
-        document.getElementById('input-tint').value = "0.10";
-        document.getElementById('input-fintervalo').value = "0.10";
-        document.getElementById('input-netapas').value = "5";
-        
-        renderAliviosInputs();
-        
-        // Etapa 1
-        document.getElementById('input-alivio1').value = "8";
-        document.getElementById('input-H1').value = "5.00";
-        document.getElementById('input-trele1').value = "0.25";
-        
-        // Etapa 2
-        document.getElementById('input-alivio2').value = "12";
-        document.getElementById('input-H2').value = "4.50";
-        document.getElementById('input-trele2').value = "0.30";
-        
-        // Etapa 3
-        document.getElementById('input-alivio3').value = "15";
-        document.getElementById('input-H3').value = "4.00";
-        document.getElementById('input-trele3').value = "0.35";
-        
-        // Etapa 4
-        document.getElementById('input-alivio4').value = "15";
-        document.getElementById('input-H4').value = "3.50";
-        document.getElementById('input-trele4').value = "0.40";
-        
-        // Etapa 5
-        document.getElementById('input-alivio5').value = "20";
-        document.getElementById('input-H5').value = "3.00";
-        document.getElementById('input-trele5').value = "0.45";
       }
       calcularYMostrar();
     }
 
-    // Copiar el reporte de simulación al portapapeles
+    // Copiar el reporte de clase al portapapeles
     function copiarReporte() {
       const reporte = document.getElementById('reporte-texto');
       const textToCopy = reporte.innerText;
@@ -937,7 +734,10 @@
 
     // Al cargar la página
     window.onload = function() {
-      renderPresets();
+      // Inputs de control de etapas
+      const inputNetapas = document.getElementById('input-netapas');
+      
+      // Renderizar alivios iniciales
       renderAliviosInputs();
 
       // Recálculo automático al cambiar inputs
@@ -945,7 +745,7 @@
       form.addEventListener('input', (e) => {
         if (e.target.id === 'input-netapas') {
           renderAliviosInputs();
-        } else if (e.target.id !== 'input-tipo-esquema') {
+        } else {
           calcularYMostrar();
         }
       });
@@ -953,71 +753,43 @@
       calcularYMostrar();
     };
 
-    // Renderizar inputs de etapa dinámicamente
+    // Renderizar inputs de alivio dinámicamente
     function renderAliviosInputs() {
-      const tipo = document.getElementById('input-tipo-esquema').value;
       const netapas = parseInt(document.getElementById('input-netapas').value) || 3;
-      const container = document.getElementById('etapas-inputs-container');
+      const container = document.getElementById('alivios-container');
       
+      // Salvar valores previos si existen para no borrarlos al cambiar etapas
       const oldVals = {};
-      const lastTipo = container.getAttribute('data-last-tipo');
-      if (lastTipo === tipo) {
-        for (let i = 1; i <= 20; i++) {
-          const valAlivio = document.getElementById(`input-alivio${i}`);
-          const valH = document.getElementById(`input-H${i}`);
-          const valTr = document.getElementById(`input-trele${i}`);
-          oldVals[i] = {
-            alivio: valAlivio ? valAlivio.value : null,
-            H: valH ? valH.value : null,
-            trele: valTr ? valTr.value : null
-          };
-        }
+      for (let i = 1; i <= 20; i++) {
+        const input = document.getElementById(`input-alivio${i}`);
+        if (input) oldVals[i] = input.value;
       }
-      
-      container.setAttribute('data-last-tipo', tipo);
-      
-      let html = `
-        <div style="display: grid; grid-template-columns: 50px 1fr 1fr 1fr; gap: 0.5rem; margin-bottom: 0.25rem; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">
-          <span>Etapa</span>
-          <span>${tipo === 'carga' ? 'Alivio %' : 'Rech. %'}</span>
-          <span>Inercia H</span>
-          <span>Relé t_r</span>
-        </div>
-      `;
-      
-      for (let i = 1; i <= netapas; i++) {
-        let defAlivio = (i === 1 ? 10 : 20);
-        let defH = 3.00;
-        let defTr = 0.30;
-        
-        if (oldVals[i]) {
-          if (oldVals[i].alivio !== null) defAlivio = oldVals[i].alivio;
-          if (oldVals[i].H !== null) defH = oldVals[i].H;
-          if (oldVals[i].trele !== null) defTr = oldVals[i].trele;
-        }
-        
-        html += `
-          <div class="stage-input-row" style="display: grid; grid-template-columns: 50px 1fr 1fr 1fr; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem;">
-            <span style="font-weight: 700; font-size: 0.85rem; color: var(--text-bright);">#${i}</span>
-            <div class="input-wrapper">
-              <input type="number" id="input-alivio${i}" value="${defAlivio}" required style="padding-right: 0.8rem; font-size: 0.9rem;">
-              <span class="unit-badge" style="right: 0.2rem; font-size: 0.7rem;">%</span>
-            </div>
-            <div class="input-wrapper">
-              <input type="number" id="input-H${i}" step="0.01" value="${defH}" required style="padding-right: 0.8rem; font-size: 0.9rem;">
-              <span class="unit-badge" style="right: 0.2rem; font-size: 0.7rem;">s</span>
-            </div>
-            <div class="input-wrapper">
-              <input type="number" id="input-trele${i}" step="0.01" value="${defTr}" required style="padding-right: 0.8rem; font-size: 0.9rem;">
-              <span class="unit-badge" style="right: 0.2rem; font-size: 0.7rem;">s</span>
-            </div>
-          </div>
-        `;
-      }
-      
-      container.innerHTML = html;
 
-      // Re-renderizar pestañas superiores
+      container.innerHTML = "";
+      for (let i = 1; i <= netapas; i++) {
+        const val = oldVals[i] !== undefined ? oldVals[i] : (i === 1 ? 10 : 20);
+        
+        const wrapper = document.createElement('div');
+        wrapper.className = "input-wrapper";
+        
+        const input = document.createElement('input');
+        input.type = "number";
+        input.id = `input-alivio${i}`;
+        input.value = val;
+        input.required = true;
+        input.style.paddingRight = "1.5rem";
+        
+        const badge = document.createElement('span');
+        badge.className = "unit-badge";
+        badge.style.right = "0.4rem";
+        badge.innerText = "%";
+        
+        wrapper.appendChild(input);
+        wrapper.appendChild(badge);
+        container.appendChild(wrapper);
+      }
+
+      // Re-renderizar tabs superiores
       renderTabs(netapas);
       
       // Forzar recálculo
@@ -1051,6 +823,7 @@
       btnResumen.innerText = "Resumen y Ajustes";
       tabsNav.appendChild(btnResumen);
 
+      // Si el tab seleccionado quedó huérfano, volver al tab 1
       if (currentTab > idxResumen) {
         currentTab = 1;
       }
@@ -1060,6 +833,7 @@
       currentTab = tabIndex;
       const netapas = parseInt(document.getElementById('input-netapas').value) || 3;
       
+      // Actualizar clases de los botones de pestañas
       for (let i = 1; i <= netapas + 1; i++) {
         const btn = document.getElementById(`tab-btn-${i}`);
         if (btn) {
@@ -1070,39 +844,30 @@
       actualizarPantalla();
     }
 
-    // Algoritmo analítico dinámico adaptado (Carga / Generación) con H y T_rele variables
-    function calcularPuntosDeEtapa(tipo, num_etapas_limite, deficit_inicial, f_ajustes, alivios_list, H_list, t_rele_list, t_int, f0) {
+    // Algoritmo analítico dinámico de clase (punto más cercano a la izquierda)
+    function calcularPuntosDeEtapa(num_etapas_limite, deficit_inicial, f_ajustes, alivios_list, f0, H, T_total) {
       let puntos = [
-        { id: "O", t: 0.0, f: f0, p: deficit_inicial, H: H_list[1], desc: "Punto Inicial O" }
+        { id: "O", t: 0.0, f: f0, p: deficit_inicial, desc: "Punto Inicial O" }
       ];
 
       for (let i = 1; i <= num_etapas_limite; i++) {
         // 1. Calcular Ri (Activación)
         const f_ajuste_i = f_ajustes[i];
         
+        // Buscar el punto más cercano a la izquierda en frecuencia (menor diferencia f >= f_ajuste_i)
         let left_r = null;
         let min_f_diff = Infinity;
         for (let pt of puntos) {
-          if (tipo === 'carga') {
-            if (pt.f >= f_ajuste_i) {
-              let diff = pt.f - f_ajuste_i;
-              if (diff < min_f_diff) {
-                min_f_diff = diff;
-                left_r = pt;
-              }
-            }
-          } else { // generacion
-            if (pt.f <= f_ajuste_i) {
-              let diff = f_ajuste_i - pt.f;
-              if (diff < min_f_diff) {
-                min_f_diff = diff;
-                left_r = pt;
-              }
+          if (pt.f >= f_ajuste_i) {
+            let diff = pt.f - f_ajuste_i;
+            if (diff < min_f_diff) {
+              min_f_diff = diff;
+              left_r = pt;
             }
           }
         }
         
-        const df_dt_r = (f0 * left_r.p) / (2 * left_r.H);
+        const df_dt_r = (f0 * left_r.p) / (2 * H);
         const t_ri = left_r.t + (f_ajuste_i - left_r.f) / df_dt_r;
         
         puntos.push({
@@ -1110,16 +875,15 @@
           t: t_ri,
           f: f_ajuste_i,
           p: left_r.p,
-          H: left_r.H,
           desc: `R${i} (Activación Etapa ${i})`,
           orig_id: left_r.id,
           p_deficit_name: left_r.p
         });
 
-        // 2. Calcular Di (Deslastre / Rechazo)
-        const T_total_i = t_rele_list[i] + t_int;
-        const t_di = t_ri + T_total_i;
+        // 2. Calcular Di (Deslastre)
+        const t_di = t_ri + T_total;
         
+        // Buscar el punto más cercano a la izquierda en tiempo (máximo t <= t_di)
         let left_d = null;
         let max_t = -Infinity;
         for (let pt of puntos) {
@@ -1131,24 +895,16 @@
           }
         }
         
-        const df_dt_d = (f0 * left_d.p) / (2 * left_d.H);
+        const df_dt_d = (f0 * left_d.p) / (2 * H);
         const f_di = left_d.f + df_dt_d * (t_di - left_d.t);
-        
-        // En carga sumamos alivio (+); en generación restamos rechazo (-)
-        const p_after_di = (tipo === 'carga') 
-          ? left_d.p + alivios_list[i]
-          : left_d.p - alivios_list[i];
-        
-        // El nuevo H activo a partir de Di es H_{i+1}. Si i === num_etapas_limite, dejamos el último H_list[i]
-        const next_H = H_list[i + 1] !== undefined ? H_list[i + 1] : H_list[i];
+        const p_after_di = left_d.p + alivios_list[i];
         
         puntos.push({
           id: `D${i}`,
           t: t_di,
           f: f_di,
           p: p_after_di,
-          H: next_H,
-          desc: (tipo === 'carga') ? `D${i} (Deslastre Etapa ${i})` : `D${i} (Rechazo Etapa ${i})`,
+          desc: `D${i} (Deslastre Etapa ${i})`,
           orig_id: left_d.id,
           p_deficit_name: left_d.p
         });
@@ -1158,28 +914,24 @@
     }
 
     function calcularYMostrar() {
-      const tipo = document.getElementById('input-tipo-esquema').value;
+      // 1. Obtener valores de los inputs
       const f0 = parseFloat(document.getElementById('input-f0').value);
+      const H = parseFloat(document.getElementById('input-H').value);
       const f_min_perm = parseFloat(document.getElementById('input-fmin').value);
       const f_ajuste_1 = parseFloat(document.getElementById('input-faj1').value);
+      
+      const t_rele = parseFloat(document.getElementById('input-trele').value);
       const t_int = parseFloat(document.getElementById('input-tint').value);
+      const T_total = t_rele + t_int; 
+
       const f_intervalo = parseFloat(document.getElementById('input-fintervalo').value);
       const netapas = parseInt(document.getElementById('input-netapas').value) || 3;
 
-      // Obtener alivios, inercias H y tiempos de relé por etapa
+      // Alivios
       const alivios_list = {};
-      const H_list = {};
-      const t_rele_list = {};
-      
       for (let i = 1; i <= netapas; i++) {
-        const inputAlivio = document.getElementById(`input-alivio${i}`);
-        alivios_list[i] = inputAlivio ? (parseFloat(inputAlivio.value) / 100.0) : (i === 1 ? 0.1 : 0.2);
-        
-        const inputH = document.getElementById(`input-H${i}`);
-        H_list[i] = inputH ? parseFloat(inputH.value) : 3.00;
-        
-        const inputTr = document.getElementById(`input-trele${i}`);
-        t_rele_list[i] = inputTr ? parseFloat(inputTr.value) : 0.30;
+        const input = document.getElementById(`input-alivio${i}`);
+        alivios_list[i] = input ? (parseFloat(input.value) / 100.0) : (i === 1 ? 0.1 : 0.2);
       }
 
       // --- CÁLCULO ITERATIVO DE LAS ETAPAS ---
@@ -1189,51 +941,40 @@
 
       for (let k = 1; k <= netapas; k++) {
         alivio_acumulado += alivios_list[k];
-        const deficit_k = (tipo === 'carga') ? -alivio_acumulado : alivio_acumulado;
+        const deficit_k = -alivio_acumulado;
 
-        // Calcular puntos de la trayectoria
-        const puntos_k = calcularPuntosDeEtapa(tipo, k, deficit_k, f_ajustes, alivios_list, H_list, t_rele_list, t_int, f0);
+        // Calcular puntos para el escenario k
+        const puntos_k = calcularPuntosDeEtapa(k, deficit_k, f_ajustes, alivios_list, f0, H, T_total);
         resultados_etapas[k] = puntos_k;
 
-        // Encontrar frecuencia al operar la etapa
+        // Encontrar el deslastre Dk
         const f_dk = puntos_k.find(p => p.id === `D${k}`).f;
 
         // Siguiente frecuencia de ajuste
         if (k < netapas) {
-          if (tipo === 'carga') {
-            f_ajustes[k + 1] = parseFloat((f_dk - f_intervalo).toFixed(3));
-          } else {
-            f_ajustes[k + 1] = parseFloat((f_dk + f_intervalo).toFixed(3));
-          }
+          f_ajustes[k + 1] = parseFloat((f_dk - f_intervalo).toFixed(3));
         }
       }
 
-      const f_extremo = resultados_etapas[netapas].find(p => p.id === `D${netapas}`).f;
-      let f_extremo_check;
-      let es_valido;
-
-      if (tipo === 'carga') {
-        f_extremo_check = parseFloat((f_extremo - f_intervalo).toFixed(3));
-        es_valido = f_extremo_check >= f_min_perm;
-      } else {
-        f_extremo_check = parseFloat((f_extremo + f_intervalo).toFixed(3));
-        es_valido = f_extremo_check <= f_min_perm;
-      }
+      const f_nadir = resultados_etapas[netapas].find(p => p.id === `D${netapas}`).f;
+      const f_min_check = parseFloat((f_nadir - f_intervalo).toFixed(3));
+      const es_valido = f_min_check >= f_min_perm;
 
       calculations = {
-        inputs: { f0, f_min_perm, f_ajuste_1, f_ajustes, t_int, f_intervalo, netapas, alivios_list, H_list, t_rele_list, tipo },
+        inputs: { f0, H, f_min_perm, f_ajuste_1, f_ajustes, T_total, f_intervalo, netapas, alivios_list },
         resultados_etapas,
-        f_min_check: f_extremo_check,
+        f_min_check,
         es_valido
       };
 
       actualizarPantalla();
     }
 
-    // Genera el texto del reporte paso a paso
-    function generarReportePasos(puntosList, inputs, tabIndex, tipo) {
+    // Genera el texto del reporte buscando dinámicamente el punto de origen
+    function generarReportePasos(puntosList, inputs, tabIndex) {
       let report = "";
       
+      // Generar orden R1, D1, R2, D2... hasta la pestaña tabIndex
       const order = [];
       for (let i = 1; i <= tabIndex; i++) {
         order.push(`R${i}`);
@@ -1251,45 +992,41 @@
         const p_val = pt.p_deficit_name;
         
         let p_comment = "";
+        // Comentarios dinámicos en base al déficit y la etapa
         if (tabIndex === 1) {
           p_comment = `(por el ${intPct(inputs.alivios_list[1])}%)` + (pt.id.startsWith("D") ? " (seguimos en primera etapa)" : "");
         } else {
+          // Para etapas N, determinamos qué se ha rechazado en base al punto de origen
           if (pt.id.startsWith("R")) {
+            // Es un disparo. Vemos cuánta carga se ha cortado antes de este disparo.
+            // Para R1 es el total de deficit
             if (pt.id === "R1") {
               let total_alivio = 0;
               for (let i = 1; i <= tabIndex; i++) total_alivio += inputs.alivios_list[i];
-              if (tipo === 'carga') {
-                p_comment = (tabIndex === inputs.netapas) 
-                  ? `(por el peor escenario de deficit, ${intPct(total_alivio)}%)`
-                  : `(por etapas acumuladas, ${intPct(total_alivio)}%)`;
-              } else {
-                p_comment = (tabIndex === inputs.netapas) 
-                  ? `(por el peor escenario de superavit, ${intPct(total_alivio)}%)`
-                  : `(por etapas acumuladas, ${intPct(total_alivio)}%)`;
-              }
+              p_comment = (tabIndex === inputs.netapas) 
+                ? `(por el peor escenario de deficit, ${intPct(total_alivio)}%)`
+                : `(por etapas acumuladas, ${intPct(total_alivio)}%)`;
             } else {
-              p_comment = (tipo === 'carga')
-                ? `(por ubicacion sigue en esta etapa, aun no opera el deslastre de la etapa anterior)`
-                : `(por ubicacion sigue en esta etapa, aun no opera el rechazo de la etapa anterior)`;
+              p_comment = `(por ubicacion sigue en esta etapa, aun no opera el deslastre de la etapa anterior)`;
             }
           } else {
+            // Es un deslastre. Vemos el déficit actual
             if (pt.id === `D${tabIndex}`) {
-              p_comment = (tipo === 'carga')
-                ? `(YA SE RECHAZO LA ETAPA ANTERIOR, QUITAMOS EL ALIVIO Y ESTE SERA EL NADIR)`
-                : `(YA SE RECHAZO LA ETAPA ANTERIOR, QUITAMOS LA GENERACION Y ESTE SERA EL ZENIT)`;
+              p_comment = `(YA SE RECHAZO LA ETAPA ANTERIOR, QUITAMOS EL ALIVIO Y ESTE SERA EL NADIR)`;
             } else {
-              p_comment = (tipo === 'carga')
-                ? `(YA SE RECHAZÓ LA ETAPA ANTERIOR, QUITAMOS EL ALIVIO EN ESTE TRAMO)`
-                : `(YA SE RECHAZÓ LA ETAPA ANTERIOR, QUITAMOS LA GENERACION EN ESTE TRAMO)`;
+              // Etapa intermedia
+              const stage_idx = parseInt(pt.id.substring(1));
+              let relief_done = 0;
+              for (let i = 1; i < stage_idx; i++) relief_done += inputs.alivios_list[i];
+              p_comment = `(YA SE RECHAZÓ LA ETAPA ANTERIOR, QUITAMOS EL ALIVIO EN ESTE TRAMO)`;
             }
           }
         }
 
         report += `${pt.orig_id} a ${pt.id}:\n`;
         report += `  I = ${inputs.f0.toFixed(3)}Hz\n`;
-        report += `  H = ${left_pt.H.toFixed(3)} (inercia activa en esta sección)\n`;
-        const signStr = (tipo === 'generacion' && p_val > 0) ? "+" : "";
-        report += `  P = ${signStr}${p_val.toFixed(2)} <span class="comment">${p_comment}</span>\n`;
+        report += `  H = ${inputs.H.toFixed(3)}\n`;
+        report += `  P = ${p_val.toFixed(2)} <span class="comment">${p_comment}</span>\n`;
         report += `  F = ${left_pt.f.toFixed(3)}Hz (frecuencia inicial ${pt.orig_id})\n`;
         
         if (pt.id.startsWith("R")) {
@@ -1297,79 +1034,57 @@
           report += `  T = ${left_pt.t.toFixed(3)}seg (tiempo de ${pt.orig_id})\n`;
           report += `  U = tiempo a descubrir -> <span class="result">${pt.t.toFixed(3)}seg</span>\n\n`;
         } else {
-          const stageIdx = parseInt(pt.id.substring(1));
-          const t_rele_stage = inputs.t_rele_list[stageIdx];
-          const t_int_global = inputs.t_int;
           report += `  G = <span class="result">${pt.f.toFixed(3)}Hz</span> (la frecuencia en ${pt.id})\n`;
           report += `  T = ${left_pt.t.toFixed(3)}seg (tiempo de ${pt.orig_id})\n`;
-          report += `  U = ${pt.t.toFixed(3)}seg (tiempo de ${pt.id} = disparo + ${t_rele_stage.toFixed(2)}s relé + ${t_int_global.toFixed(2)}s interruptor)\n\n`;
+          report += `  U = ${pt.t.toFixed(3)}seg (tiempo de ${pt.id})\n\n`;
         }
       });
 
+      // Margen al final
       const f_last_d = puntosList.find(p => p.id === `D${tabIndex}`).f;
+      const f_aj_next = f_last_d - inputs.f_intervalo;
 
       if (tabIndex < inputs.netapas) {
-        if (tipo === 'carga') {
-          const f_aj_next = f_last_d - inputs.f_intervalo;
-          report += `Aplicamos el intervalo de frecuencia: ${f_last_d.toFixed(3)}Hz - ${inputs.f_intervalo.toFixed(3)}Hz = <span class="result">${f_aj_next.toFixed(3)}Hz</span>`;
-        } else {
-          const f_aj_next = f_last_d + inputs.f_intervalo;
-          report += `Aplicamos el intervalo de frecuencia: ${f_last_d.toFixed(3)}Hz + ${inputs.f_intervalo.toFixed(3)}Hz = <span class="result">${f_aj_next.toFixed(3)}Hz</span>`;
-        }
+        report += `Aplicamos el intervalo de frecuencia: ${f_last_d.toFixed(3)}Hz - ${inputs.f_intervalo.toFixed(3)}Hz = <span class="result">${f_aj_next.toFixed(3)}Hz</span>`;
       } else {
-        if (tipo === 'carga') {
-          report += `Aplicamos el intervalo de frecuencia: ${f_last_d.toFixed(3)}Hz - ${inputs.f_intervalo.toFixed(3)}Hz = <span class="result">${calculations.f_min_check.toFixed(3)}Hz</span>\n\n`;
-          report += `COMPROBACION FINAL:\n`;
-          report += `  FREC. MIN = ${calculations.f_min_check.toFixed(3)}Hz\n`;
-          report += `  Como ${calculations.f_min_check.toFixed(3)}Hz ${calculations.es_valido ? '>' : '<'} ${inputs.f_min_perm.toFixed(3)}Hz (${calculations.es_valido ? 'Se respeta la frecuencia minima permisible' : 'NO se respeta la frecuencia minima permisible'}).\n`;
-          report += `  Esquema ${calculations.es_valido ? 'valido. (Check verde ✔)' : 'invalido. (Cruz roja ❌)'}`;
-        } else {
-          report += `Aplicamos el intervalo de frecuencia: ${f_last_d.toFixed(3)}Hz + ${inputs.f_intervalo.toFixed(3)}Hz = <span class="result">${calculations.f_min_check.toFixed(3)}Hz</span>\n\n`;
-          report += `COMPROBACION FINAL:\n`;
-          report += `  FREC. MAX = ${calculations.f_min_check.toFixed(3)}Hz\n`;
-          report += `  Como ${calculations.f_min_check.toFixed(3)}Hz ${calculations.es_valido ? '<=' : '>'} ${inputs.f_min_perm.toFixed(3)}Hz (${calculations.es_valido ? 'Se respeta la frecuencia maxima permisible' : 'NO se respeta la frecuencia maxima permisible'}).\n`;
-          report += `  Esquema ${calculations.es_valido ? 'valido. (Check verde ✔)' : 'invalido. (Cruz roja ❌)'}`;
-        }
+        report += `Aplicamos el intervalo de frecuencia: ${f_last_d.toFixed(3)}Hz - ${inputs.f_intervalo.toFixed(3)}Hz = <span class="result">${calculations.f_min_check.toFixed(3)}Hz</span>\n\n`;
+        report += `COMPROBACION FINAL:\n`;
+        report += `  FREC. MIN = ${calculations.f_min_check.toFixed(3)}Hz\n`;
+        report += `  Como ${calculations.f_min_check.toFixed(3)}Hz ${calculations.es_valido ? '>' : '<'} ${inputs.f_min_perm.toFixed(3)}Hz (${calculations.es_valido ? 'Se respeta la frecuencia minima permisible' : 'NO se respeta la frecuencia minima permisible'}).\n`;
+        report += `  Esquema ${calculations.es_valido ? 'valido. (Check verde ✔)' : 'invalido. (Cruz roja ❌)'}`;
       }
 
       return report;
     }
 
     function actualizarTablasResumen(calculations) {
-      const { inputs, resultados_etapas, tipo } = calculations;
+      const { inputs, resultados_etapas } = calculations;
       const netapas = inputs.netapas;
 
-      // 1. Tabla Ajustes y Parámetros
+      // 1. Tabla Ajustes Dinámica
       let htmlAjustes = `
         <thead>
           <tr>
             <th>ETAPA</th>
             <th>Frecuencia (Hz)</th>
-            <th>Inercia H (s)</th>
-            <th>Tiempo Relé (s)</th>
-            <th>Tiempo Int. (s)</th>
-            <th>Tiempo Total (s)</th>
+            <th>Tiempo (seg)</th>
           </tr>
         </thead>
         <tbody>
       `;
       for (let i = 1; i <= netapas; i++) {
-        const t_total_stage = inputs.t_rele_list[i] + inputs.t_int;
         htmlAjustes += `
           <tr>
             <td style="font-weight:600;">${i}</td>
             <td>${inputs.f_ajustes[i].toFixed(3)}</td>
-            <td>${inputs.H_list[i].toFixed(2)}</td>
-            <td>${inputs.t_rele_list[i].toFixed(2)}</td>
-            <td>${inputs.t_int.toFixed(2)}</td>
-            <td>${t_total_stage.toFixed(2)}</td>
+            <td>${inputs.T_total.toFixed(1)}</td>
           </tr>
         `;
       }
       htmlAjustes += `</tbody>`;
       document.getElementById('tabla-ajustes').innerHTML = htmlAjustes;
 
-      // 2. Tabla Resumen General
+      // 2. Tabla Resumen Dinámica
       let htmlResumen = `
         <thead>
           <tr>
@@ -1378,6 +1093,7 @@
             <th>METRICA</th>
       `;
       
+      // Columnas para R y D de cada etapa
       for (let i = 1; i <= netapas; i++) {
         htmlResumen += `
           <th>ETAPA ${i} (R${i})</th>
@@ -1390,6 +1106,7 @@
         <tbody>
       `;
 
+      // Helpers para leer frecuencia y tiempo
       const getFVal = (pts, id) => {
         const p = pts.find(x => x.id === id);
         return p ? p.f.toFixed(3) : "-";
@@ -1399,13 +1116,14 @@
         return p ? p.t.toFixed(3) : "-";
       };
 
+      // Fila por cada escenario de etapa de cálculo
       for (let k = 1; k <= netapas; k++) {
         const pts_k = resultados_etapas[k];
         
         let procTitle = "";
         let stagesStr = "";
         if (k === netapas) {
-          procTitle = (tipo === 'carga') ? "COMPROBACION DE LA MINIMA FRECUENCIA" : "COMPROBACION DE LA MAXIMA FRECUENCIA";
+          procTitle = "COMPROBACION DE LA MINIMA FRECUENCIA";
           let arr = [];
           for (let s = 1; s <= k; s++) arr.push(s);
           stagesStr = arr.join(" + ");
@@ -1454,7 +1172,6 @@
 
       const { inputs, resultados_etapas, f_min_check, es_valido } = calculations;
       const netapas = inputs.netapas;
-      const tipo = inputs.tipo;
       
       const chartSection = document.getElementById('chart-section');
       const reportTitleSection = document.getElementById('report-title-section');
@@ -1463,6 +1180,7 @@
       const statusBadge = document.getElementById('status-badge');
 
       if (currentTab === netapas + 1) {
+        // Vista Resumen
         chartSection.style.display = 'none';
         reportTitleSection.style.display = 'none';
         reportTexto.style.display = 'none';
@@ -1470,19 +1188,22 @@
         
         actualizarTablasResumen(calculations);
       } else {
+        // Vista de etapa normal (1 a N)
         chartSection.style.display = 'block';
         reportTitleSection.style.display = 'flex';
         reportTexto.style.display = 'block';
         resumenSection.style.display = 'none';
 
         const activePuntos = resultados_etapas[currentTab];
-        reportTexto.innerHTML = generarReportePasos(activePuntos, inputs, currentTab, tipo);
+        reportTexto.innerHTML = generarReportePasos(activePuntos, inputs, currentTab);
 
+        // Armar líneas de ajuste para graficar
         const stagesLines = {};
         for (let i = 1; i <= currentTab; i++) {
           stagesLines[i] = inputs.f_ajustes[i];
         }
 
+        // Dividir los puntos de la trayectoria en segmentos ordenados cronológicamente por deslastres
         const sortedPuntos = [...activePuntos].sort((a, b) => a.t - b.t);
         const segments = [];
         for (let j = 1; j <= currentTab; j++) {
@@ -1496,70 +1217,62 @@
             const t_start = startPt.t;
             const t_end = endPt.t;
             
+            // Filtrar todos los puntos que caen cronológicamente en este tramo
             const segmentPts = sortedPuntos
               .filter(p => p.t >= t_start && p.t <= t_end)
               .map(p => ({ x: p.t, y: p.f, desc: p.id }));
             
             if (segmentPts.length > 0) {
               const pctDeficit = Math.abs(startPt.p * 100).toFixed(0);
-              const labelTxt = (tipo === 'carga') 
-                ? `Tramo ${j} (Déficit: ${pctDeficit}%, H: ${startPt.H.toFixed(2)}s)` 
-                : `Tramo ${j} (Superávit: ${pctDeficit}%, H: ${startPt.H.toFixed(2)}s)`;
-              
               segments.push({
-                label: labelTxt,
+                label: `Tramo ${j} (Déficit: ${pctDeficit}%)`,
                 points: segmentPts
               });
             }
           }
         }
 
-        dibujarGrafico(tipo, segments, stagesLines, inputs.f_min_perm);
+        dibujarGrafico(segments, stagesLines, inputs.f_min_perm);
       }
 
+      // Actualizar badge de estado
       const statusIcon = document.getElementById('status-icon');
       const statusText = document.getElementById('status-text');
 
       if (es_valido) {
         statusBadge.className = "status-badge valid";
         statusIcon.innerHTML = "✔";
-        if (tipo === 'carga') {
-          statusText.innerHTML = `Esquema válido. Frec. Mínima de seguridad (${f_min_check.toFixed(3)} Hz) es mayor o igual que el límite permitido (${inputs.f_min_perm.toFixed(3)} Hz).`;
-        } else {
-          statusText.innerHTML = `Esquema válido. Frec. Máxima de seguridad (${f_min_check.toFixed(3)} Hz) es menor o igual que el límite permitido (${inputs.f_min_perm.toFixed(3)} Hz).`;
-        }
+        statusText.innerHTML = `Esquema válido. Frec. Mínima de seguridad (${f_min_check.toFixed(3)} Hz) es mayor que el límite permitido (${inputs.f_min_perm.toFixed(3)} Hz).`;
       } else {
         statusBadge.className = "status-badge invalid";
         statusIcon.innerHTML = "❌";
-        if (tipo === 'carga') {
-          statusText.innerHTML = `Esquema inválido. Frec. Mínima de seguridad (${f_min_check.toFixed(3)} Hz) es menor que el límite permitido (${inputs.f_min_perm.toFixed(3)} Hz).`;
-        } else {
-          statusText.innerHTML = `Esquema inválido. Frec. Máxima de seguridad (${f_min_check.toFixed(3)} Hz) es mayor que el límite permitido (${inputs.f_min_perm.toFixed(3)} Hz).`;
-        }
+        statusText.innerHTML = `Esquema inválido. Frec. Mínima de seguridad (${f_min_check.toFixed(3)} Hz) es menor que el límite permitido (${inputs.f_min_perm.toFixed(3)} Hz).`;
       }
     }
 
-    // Renderizar el gráfico interactivo
-    function dibujarGrafico(tipo, segments, stagesLines, fLimit) {
+    // Función para renderizar el gráfico
+    function dibujarGrafico(segments, stagesLines, fMinPerm) {
       const ctx = document.getElementById('trayectoriaChart').getContext('2d');
 
       if (chartInstance) {
         chartInstance.destroy();
       }
 
+      // Espectro de colores para tramos de la trayectoria
       const segmentColors = [
-        '#ff7b72', // Rojo brillante
-        '#bc8cff', // Morado
-        '#58a6ff', // Azul
-        '#56d364', // Verde
-        '#d29922', // Amarillo/Naranja
-        '#388bfd', // Azul claro
-        '#f85149', // Rojo oscuro
-        '#aff5b4'  // Verde claro
+        '#ff7b72', // Rojo brillante (Tramo 1 - Peor escenario)
+        '#bc8cff', // Morado (Tramo 2)
+        '#58a6ff', // Azul (Tramo 3)
+        '#56d364', // Verde (Tramo 4)
+        '#d29922', // Amarillo/Naranja (Tramo 5)
+        '#388bfd', // Azul claro (Tramo 6)
+        '#f85149', // Rojo oscuro (Tramo 7)
+        '#aff5b4'  // Verde claro (Tramo 8)
       ];
 
       const datasets = [];
 
+      // 1. Agregar los datasets de los tramos de trayectoria
       segments.forEach((seg, idx) => {
         const color = segmentColors[idx % segmentColors.length];
         datasets.push({
@@ -1579,17 +1292,15 @@
         });
       });
 
+      // Determinar t_max para ajustar la longitud de las líneas horizontales de referencia
       const allTimes = [];
       segments.forEach(seg => seg.points.forEach(p => allTimes.push(p.x)));
       const tMax = allTimes.length > 0 ? Math.max(...allTimes) : 1.0;
 
-      const limitLabel = (tipo === 'carga') 
-        ? `Frec. Mínima Permisible (${fLimit.toFixed(3)} Hz)` 
-        : `Frec. Máxima Permisible (${fLimit.toFixed(3)} Hz)`;
-
+      // 2. Línea de Frecuencia Mínima Permisible
       datasets.push({
-        label: limitLabel,
-        data: [{ x: -0.02, y: fLimit }, { x: tMax + 0.05, y: fLimit }],
+        label: `Frec. Mínima Permisible (${fMinPerm.toFixed(3)} Hz)`,
+        data: [{ x: -0.02, y: fMinPerm }, { x: tMax + 0.05, y: fMinPerm }],
         borderColor: '#f85149',
         borderWidth: 2,
         borderDash: [6, 4],
@@ -1598,6 +1309,7 @@
         showLine: true
       });
 
+      // 3. Líneas de los relés de ajuste
       Object.keys(stagesLines).forEach((key, idx) => {
         const val = stagesLines[key];
         const color = segmentColors[(idx) % segmentColors.length];
@@ -1612,9 +1324,6 @@
           showLine: true
         });
       });
-
-      const yMin = (tipo === 'carga') ? 55.0 : 59.5;
-      const yMax = (tipo === 'carga') ? 60.5 : 65.0;
 
       chartInstance = new Chart(ctx, {
         type: 'scatter',
@@ -1675,8 +1384,8 @@
               }
             },
             y: {
-              min: yMin,
-              max: yMax,
+              min: 55.0,
+              max: 60.5,
               grid: {
                 color: 'rgba(48, 54, 61, 0.3)'
               },
