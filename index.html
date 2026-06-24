@@ -806,7 +806,11 @@
         btn.id = `tab-btn-${i}`;
         btn.className = "tab-button" + (currentTab === i ? " active" : "");
         btn.onclick = () => cambiarTab(i);
-        btn.innerText = `Etapa ${i}`;
+        if (i === netapas) {
+          btn.innerText = "Validación";
+        } else {
+          btn.innerText = `Ajuste Etapa ${i + 1}`;
+        }
         tabsNav.appendChild(btn);
       }
 
