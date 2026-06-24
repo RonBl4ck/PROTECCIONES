@@ -41,7 +41,13 @@ export default async function middleware(request) {
   }
 
   try {
-    const res = await fetch(edgeConfigUrl);
+    // Transformar la URL de conexión para que apunte al endpoint de items (/items)
+    const itemsUrl = new URL(edgeConfigUrl);
+    if (!itemsUrl.pathname.endsWith('/items')) {
+      itemsUrl.pathname = itemsUrl.pathname.replace(/\/$/, '') + '/items';
+    }
+
+    const res = await fetch(itemsUrl.toString());
     if (!res.ok) {
       console.error("Error al obtener Edge Config:", res.statusText);
       return new Response('Error de configuracion en el servidor', { status: 500 });
