@@ -1,0 +1,1608 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coordinación de Protecciones - Carga y Generación</title>
+  <meta name="description" content="Simulación interactiva paso a paso del Esquema de Rechazo de Carga (ERCMF) y Rechazo de Generación (ERCGF) con número dinámico de etapas y listo para Vercel.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root {
+      --bg-dark: #0d1117;
+      --bg-card: rgba(22, 27, 34, 0.7);
+      --bg-card-hover: rgba(33, 38, 45, 0.85);
+      --border-color: rgba(48, 54, 61, 0.8);
+      --border-glow: #58a6ff;
+      --text-main: #c9d1d9;
+      --text-bright: #f0f6fc;
+      --text-muted: #8b949e;
+      --primary: #1f6feb;
+      --primary-glow: rgba(31, 111, 235, 0.4);
+      --success: #3fb950;
+      --success-glow: rgba(63, 185, 80, 0.2);
+      --error: #f85149;
+      --error-glow: rgba(248, 81, 73, 0.2);
+      --font-family: 'Outfit', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(31, 111, 235, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(188, 140, 255, 0.15) 0px, transparent 50%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      font-family: var(--font-family);
+      line-height: 1.5;
+      padding: 2rem;
+      min-height: 100vh;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #58a6ff, #bc8cff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.5px;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      font-weight: 400;
+    }
+
+    /* Layout Principal */
+    .app-container {
+      max-width: 1500px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 400px 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    @media (max-width: 1024px) {
+      .app-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Paneles / Cards con Glassmorphism */
+    .card {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .card:hover {
+      border-color: rgba(88, 166, 255, 0.3);
+      box-shadow: 0 8px 32px 0 rgba(31, 111, 235, 0.05);
+    }
+
+    .panel-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text-bright);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.75rem;
+    }
+
+    /* Inputs de Premisas */
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-bright);
+      margin-bottom: 0.5rem;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      background: rgba(22, 27, 34, 0.5);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      color: var(--text-bright);
+      font-family: var(--font-family);
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.25s ease;
+    }
+
+    .form-group select {
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238b949e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      background-size: 1.2rem;
+      padding-right: 2.5rem;
+    }
+
+    .form-group input:focus, .form-group select:focus {
+      outline: none;
+      border-color: var(--border-glow);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+      background: rgba(22, 27, 34, 0.8);
+    }
+
+    .unit-badge {
+      position: absolute;
+      right: 1rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    /* Botones */
+    .btn-primary {
+      width: 100%;
+      background: linear-gradient(135deg, var(--primary), #388bfd);
+      border: none;
+      border-radius: 8px;
+      padding: 0.9rem;
+      color: white;
+      font-family: var(--font-family);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 12px rgba(31, 111, 235, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(31, 111, 235, 0.5);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    /* Pestañas (Tabs) */
+    .tabs-container {
+      display: flex;
+      gap: 0.4rem;
+      margin-bottom: 1.5rem;
+      background: rgba(22, 27, 34, 0.5);
+      padding: 0.4rem;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      flex-wrap: wrap;
+    }
+
+    .tab-button {
+      flex: 1 1 auto;
+      background: transparent;
+      border: none;
+      border-radius: 6px;
+      padding: 0.6rem 0.8rem;
+      color: var(--text-muted);
+      font-family: var(--font-family);
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+      min-width: 80px;
+    }
+
+    .tab-button:hover {
+      color: var(--text-bright);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .tab-button.active {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 2px 8px rgba(31, 111, 235, 0.4);
+    }
+
+    /* Gráfico */
+    .chart-container {
+      position: relative;
+      width: 100%;
+      height: 380px;
+      margin-bottom: 2rem;
+      background: rgba(13, 17, 23, 0.4);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1rem;
+    }
+
+    /* Bloque de Pasos de Clase */
+    .report-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-bright);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .steps-report {
+      background: #0d1117;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.92rem;
+      line-height: 1.6;
+      color: #8adef8;
+      overflow-x: auto;
+      white-space: pre;
+      margin-bottom: 1.5rem;
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
+    }
+
+    .steps-report span.comment {
+      color: #8b949e;
+    }
+
+    .steps-report span.result {
+      color: #58a6ff;
+      font-weight: bold;
+    }
+
+    /* Tablas de Resumen */
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+      margin-top: 0.75rem;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      background: rgba(13, 17, 23, 0.4);
+    }
+
+    .resumen-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--font-family);
+      font-size: 0.88rem;
+    }
+
+    .resumen-table th, .resumen-table td {
+      border: 1px solid var(--border-color);
+      padding: 0.65rem 0.85rem;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .resumen-table th {
+      background: rgba(31, 111, 235, 0.15);
+      color: var(--text-bright);
+      font-weight: 700;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .resumen-table tr:nth-child(even) {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .resumen-table td.row-title {
+      font-weight: 700;
+      color: var(--text-bright);
+      background: rgba(255, 255, 255, 0.03);
+      text-align: left;
+      font-size: 0.82rem;
+    }
+
+    /* Tarjeta de Verificación */
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1.25rem;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-top: 1.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .status-badge.valid {
+      background: var(--success-glow);
+      border: 1px solid var(--success);
+      color: #56d364;
+    }
+
+    .status-badge.invalid {
+      background: var(--error-glow);
+      border: 1px solid var(--error);
+      color: #f85149;
+    }
+
+    .status-icon {
+      font-size: 1.5rem;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    /* Botones pequeños de acción y preset */
+    .btn-preset {
+      background: rgba(22, 27, 34, 0.6);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      color: var(--text-main);
+      cursor: pointer;
+      font-family: var(--font-family);
+      font-weight: 600;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+
+    .btn-preset:hover {
+      background: rgba(31, 111, 235, 0.15);
+      border-color: var(--border-glow);
+      color: var(--text-bright);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Coordinación de Esquemas de Rechazo</h1>
+    <p>Calculadora analítica dinámica interactiva paso a paso (ERCMF y ERCGF)</p>
+  </header>
+
+  <main class="app-container">
+    
+    <!-- PANEL IZQUIERDO: PREMISAS -->
+    <section class="card">
+      <h2 class="panel-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+        Estudio y Premisas
+      </h2>
+
+      <!-- Selector de Modo de Simulación -->
+      <div class="form-group">
+        <label for="input-tipo-esquema" style="font-weight: 700; color: #58a6ff;">Tipo de Esquema</label>
+        <div class="input-wrapper">
+          <select id="input-tipo-esquema" onchange="cambiarTipoEsquema()">
+            <option value="carga" selected>Rechazo de Carga (Subfrecuencia - ERCMF)</option>
+            <option value="generacion">Rechazo de Generación (Sobrefrecuencia - ERCGF)</option>
+          </select>
+        </div>
+      </div>
+      
+      <!-- Presets de Carga Rápida -->
+      <div class="presets-container" style="margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem;">
+        <span style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Cargar Casos de Ejemplo</span>
+        <div id="presets-buttons-container" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <!-- Llenado dinámico según modo -->
+        </div>
+      </div>
+
+      <form id="premisas-form" onsubmit="event.preventDefault(); calcularYMostrar();">
+        <div class="form-group">
+          <label for="input-f0">Frecuencia Inicial (I)</label>
+          <div class="input-wrapper">
+            <input type="number" id="input-f0" step="0.01" value="60.00" required>
+            <span class="unit-badge">Hz</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="input-H">Constante de Inercia (H)</label>
+          <div class="input-wrapper">
+            <input type="number" id="input-H" step="0.01" value="3.00" required>
+            <span class="unit-badge">seg</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="input-fmin">Frecuencia Mínima Permisible</label>
+          <div class="input-wrapper">
+            <input type="number" id="input-fmin" step="0.01" value="56.00" required>
+            <span class="unit-badge">Hz</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="input-faj1">Ajuste 1ª Etapa de Rechazo</label>
+          <div class="input-wrapper">
+            <input type="number" id="input-faj1" step="0.01" value="59.00" required>
+            <span class="unit-badge">Hz</span>
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label for="input-trele">Tiempo Relé</label>
+            <div class="input-wrapper">
+              <input type="number" id="input-trele" step="0.01" value="0.30" required>
+              <span class="unit-badge">s</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="input-tint">Tiempo Interruptor</label>
+            <div class="input-wrapper">
+              <input type="number" id="input-tint" step="0.01" value="0.10" required>
+              <span class="unit-badge">s</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="input-fintervalo">Intervalo de Frecuencia (Margen)</label>
+          <div class="input-wrapper">
+            <input type="number" id="input-fintervalo" step="0.01" value="0.10" required>
+            <span class="unit-badge">Hz</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="input-netapas">Número de Etapas</label>
+          <div class="input-wrapper">
+            <input type="number" id="input-netapas" min="1" max="8" value="3" required>
+            <span class="unit-badge">etapas</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Alivio por Etapas</label>
+          <div id="alivios-container" class="form-grid-2" style="grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap: 0.5rem;">
+            <!-- Llenado dinámico en JS -->
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary" id="btn-calcular" style="margin-bottom: 0.5rem;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Calcular y Simular
+        </button>
+      </form>
+
+      <!-- Acordeón Educativo de Fórmulas -->
+      <div class="card-accordion" style="margin-top: 1.25rem; border-top: 1px solid var(--border-color); padding-top: 1.25rem;">
+        <button type="button" class="btn-preset" id="btn-formulas-toggle" onclick="toggleFormulas()" style="width: 100%; display: flex; justify-content: space-between; align-items: center; background: rgba(13, 17, 23, 0.4); padding: 0.6rem 0.85rem; border-radius: 6px;">
+          <span style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; font-weight: 700; color: var(--text-bright);">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            Fórmulas y Conceptos
+          </span>
+          <span id="formulas-arrow" style="font-size: 0.75rem; color: var(--text-muted);">▼</span>
+        </button>
+        <div id="formulas-content" style="display: none; padding: 1rem 0.25rem 0 0.25rem; font-size: 0.85rem; color: var(--text-main); line-height: 1.6;">
+          <p style="margin-bottom: 0.5rem;"><strong>1. Pendiente de Caída/Elevación (RoCoF):</strong></p>
+          <div style="background: rgba(13, 17, 23, 0.6); padding: 0.5rem; border-radius: 6px; font-family: var(--font-mono); text-align: center; margin-bottom: 0.75rem; border: 1px solid var(--border-color); color: #58a6ff; font-weight: 600;">
+            df/dt = (f₀ × P) / (2H)
+          </div>
+          <p style="margin-bottom: 0.75rem; font-size: 0.8rem; color: var(--text-muted);">
+            Donde <code style="color:var(--text-bright)">f₀</code> es la frec. inicial, <code style="color:var(--text-bright)">H</code> es la inercia, y <code style="color:var(--text-bright)">P</code> es el desbalance de potencia (+ para superávit, - para déficit).
+          </p>
+          
+          <p style="margin-bottom: 0.5rem;"><strong>2. Tiempo hasta activar relé (R₁):</strong></p>
+          <div style="background: rgba(13, 17, 23, 0.6); padding: 0.5rem; border-radius: 6px; font-family: var(--font-mono); text-align: center; margin-bottom: 0.75rem; border: 1px solid var(--border-color); color: #bc8cff; font-weight: 600;">
+            t_Rᵢ = t_ref + (f_ajuste_i - f_ref) / (df/dt)
+          </div>
+          
+          <p style="margin-bottom: 0.5rem;"><strong>3. Frecuencia al operar actuación (D₁):</strong></p>
+          <div style="background: rgba(13, 17, 23, 0.6); padding: 0.5rem; border-radius: 6px; font-family: var(--font-mono); text-align: center; margin-bottom: 0.75rem; border: 1px solid var(--border-color); color: #56d364; font-weight: 600;">
+            f_Dᵢ = f_ref + (df/dt) × (t_Dᵢ - t_ref)
+          </div>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">
+            *Nota: <code style="color:var(--text-bright)">t_ref</code> y <code style="color:var(--text-bright)">f_ref</code> son el tiempo y la frecuencia del punto más cercano a la izquierda.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANEL DERECHO: RESULTADOS Y GRAFICOS -->
+    <section class="card" style="padding-bottom: 1.5rem;">
+      <!-- Pestañas de Etapa -->
+      <div class="tabs-container" id="tabs-navigation">
+        <!-- Llenado dinámico en JS -->
+      </div>
+
+      <!-- Gráfico de la etapa activa -->
+      <div class="chart-container" id="chart-section">
+        <canvas id="trayectoriaChart"></canvas>
+      </div>
+
+      <!-- Reporte Paso a Paso -->
+      <div id="reporte-header-container" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+        <h3 class="report-title" id="report-title-section" style="margin-bottom: 0; border-bottom: none; padding-bottom: 0;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          Pasos Resueltos de Simulación
+        </h3>
+        <button type="button" class="btn-preset" id="btn-copiar-reporte" onclick="copiarReporte()" style="width: auto; padding: 0.35rem 0.75rem; font-size: 0.8rem; display: flex; align-items: center; gap: 0.35rem;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copiar Reporte
+        </button>
+      </div>
+      <div class="steps-report" id="reporte-texto">Cargando reporte...</div>
+
+      <!-- Tab Resumen y Ajustes (Oculto al inicio) -->
+      <div id="resumen-section" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; margin-bottom: 0.75rem;">
+          <h3 class="report-title" style="margin-bottom: 0; border-bottom: none; padding-bottom: 0;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            Cuadro 1: AJUSTES
+          </h3>
+          <button type="button" class="btn-preset" onclick="exportarCSV('tabla-ajustes', 'ajustes_coordinacion.csv')" style="width: auto; padding: 0.35rem 0.75rem; font-size: 0.78rem; display: flex; align-items: center; gap: 0.35rem;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Descargar CSV
+          </button>
+        </div>
+        <div class="table-responsive" style="margin-top: 0;">
+          <table class="resumen-table" id="tabla-ajustes">
+            <!-- Llenado dinámico -->
+          </table>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; margin-bottom: 0.75rem;">
+          <h3 class="report-title" style="margin-bottom: 0; border-bottom: none; padding-bottom: 0;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            Cuadro 2: RESUMEN GENERAL DEL PROCESO
+          </h3>
+          <button type="button" class="btn-preset" onclick="exportarCSV('tabla-resumen', 'resumen_coordinacion.csv')" style="width: auto; padding: 0.35rem 0.75rem; font-size: 0.78rem; display: flex; align-items: center; gap: 0.35rem;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Descargar CSV
+          </button>
+        </div>
+        <div class="table-responsive" style="margin-top: 0;">
+          <table class="resumen-table" id="tabla-resumen">
+            <!-- Llenado dinámico -->
+          </table>
+        </div>
+      </div>
+
+      <!-- Estado de Verificación -->
+      <div class="status-badge valid" id="status-badge">
+        <span class="status-icon" id="status-icon">✔</span>
+        <span id="status-text">Esquema válido.</span>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    Desarrollado para el Laboratorio de Protecciones de Sistemas de Potencia | LNavarrete
+  </footer>
+
+  <script>
+    // Variables globales
+    let currentTab = 1;
+    let chartInstance = null;
+    let calculations = null;
+
+    // Cambiar la visualización según el tipo de esquema seleccionado
+    function cambiarTipoEsquema() {
+      const tipo = document.getElementById('input-tipo-esquema').value;
+      const lblFmin = document.querySelector('label[for="input-fmin"]');
+      const lblFaj1 = document.querySelector('label[for="input-faj1"]');
+      const lblAlivios = document.querySelector('label[id="alivios-container"]').previousElementSibling;
+      const subtitle = document.querySelector('header p');
+      
+      if (tipo === 'carga') {
+        lblFmin.innerText = "Frecuencia Mínima Permisible";
+        lblFaj1.innerText = "Ajuste 1ª Etapa de Rechazo";
+        lblAlivios.innerText = "Alivio por Etapas";
+        subtitle.innerText = "Calculadora analítica dinámica interactiva paso a paso (ERCMF)";
+        
+        document.getElementById('input-f0').value = "60.00";
+        document.getElementById('input-fmin').value = "56.00";
+        document.getElementById('input-faj1').value = "59.00";
+      } else {
+        lblFmin.innerText = "Frecuencia Máxima Permisible";
+        lblFaj1.innerText = "Ajuste 1ª Etapa de Rechazo";
+        lblAlivios.innerText = "Rechazo de Generación por Etapas";
+        subtitle.innerText = "Calculadora analítica dinámica interactiva paso a paso (ERCGF)";
+        
+        document.getElementById('input-f0').value = "60.00";
+        document.getElementById('input-fmin').value = "62.00";
+        document.getElementById('input-faj1').value = "61.00";
+      }
+      
+      renderPresets();
+      renderAliviosInputs();
+    }
+
+    // Cargar presets de ejemplos según el modo seleccionado
+    function renderPresets() {
+      const tipo = document.getElementById('input-tipo-esquema').value;
+      const container = document.getElementById('presets-buttons-container');
+      
+      if (tipo === 'carga') {
+        container.innerHTML = `
+          <button type="button" class="btn-preset" onclick="cargarPreset(1)" style="flex: 1; padding: 0.5rem 0.25rem; font-size: 0.78rem;">3 Etapas (Clase)</button>
+          <button type="button" class="btn-preset" onclick="cargarPreset(2)" style="flex: 1; padding: 0.5rem 0.25rem; font-size: 0.78rem;">4 Etapas</button>
+          <button type="button" class="btn-preset" onclick="cargarPreset(3)" style="flex: 1; padding: 0.5rem 0.25rem; font-size: 0.78rem;">5 Etapas (Inercia)</button>
+        `;
+      } else {
+        container.innerHTML = `
+          <button type="button" class="btn-preset" onclick="cargarPreset(4)" style="flex: 1; padding: 0.5rem 0.25rem; font-size: 0.78rem;">3 Etapas (Generación)</button>
+          <button type="button" class="btn-preset" onclick="cargarPreset(5)" style="flex: 1; padding: 0.5rem 0.25rem; font-size: 0.78rem;">4 Etapas (Generación)</button>
+          <button type="button" class="btn-preset" onclick="cargarPreset(6)" style="flex: 1; padding: 0.5rem 0.25rem; font-size: 0.78rem;">5 Etapas (Inercia Gen)</button>
+        `;
+      }
+    }
+
+    function cargarPreset(type) {
+      const tipoSelect = document.getElementById('input-tipo-esquema');
+      
+      if (type === 1) {
+        tipoSelect.value = 'carga';
+        cambiarTipoEsquema();
+        
+        document.getElementById('input-f0').value = "60.00";
+        document.getElementById('input-H').value = "3.00";
+        document.getElementById('input-fmin').value = "56.00";
+        document.getElementById('input-faj1').value = "59.00";
+        document.getElementById('input-trele').value = "0.30";
+        document.getElementById('input-tint').value = "0.10";
+        document.getElementById('input-fintervalo').value = "0.10";
+        document.getElementById('input-netapas').value = "3";
+        
+        renderAliviosInputs();
+        document.getElementById('input-alivio1').value = "10";
+        document.getElementById('input-alivio2').value = "20";
+        document.getElementById('input-alivio3').value = "20";
+      } else if (type === 2) {
+        tipoSelect.value = 'carga';
+        cambiarTipoEsquema();
+        
+        document.getElementById('input-f0').value = "60.00";
+        document.getElementById('input-H').value = "3.00";
+        document.getElementById('input-fmin').value = "56.00";
+        document.getElementById('input-faj1').value = "59.00";
+        document.getElementById('input-trele').value = "0.30";
+        document.getElementById('input-tint').value = "0.10";
+        document.getElementById('input-fintervalo').value = "0.10";
+        document.getElementById('input-netapas').value = "4";
+        
+        renderAliviosInputs();
+        document.getElementById('input-alivio1').value = "10";
+        document.getElementById('input-alivio2').value = "15";
+        document.getElementById('input-alivio3').value = "15";
+        document.getElementById('input-alivio4').value = "20";
+      } else if (type === 3) {
+        tipoSelect.value = 'carga';
+        cambiarTipoEsquema();
+        
+        document.getElementById('input-f0').value = "60.00";
+        document.getElementById('input-H').value = "5.00";
+        document.getElementById('input-fmin').value = "56.00";
+        document.getElementById('input-faj1').value = "59.00";
+        document.getElementById('input-trele').value = "0.30";
+        document.getElementById('input-tint').value = "0.10";
+        document.getElementById('input-fintervalo').value = "0.10";
+        document.getElementById('input-netapas').value = "5";
+        
+        renderAliviosInputs();
+        document.getElementById('input-alivio1').value = "8";
+        document.getElementById('input-alivio2').value = "12";
+        document.getElementById('input-alivio3').value = "15";
+        document.getElementById('input-alivio4').value = "15";
+        document.getElementById('input-alivio5').value = "20";
+      } else if (type === 4) {
+        tipoSelect.value = 'generacion';
+        cambiarTipoEsquema();
+        
+        document.getElementById('input-f0').value = "60.00";
+        document.getElementById('input-H').value = "3.00";
+        document.getElementById('input-fmin').value = "62.00";
+        document.getElementById('input-faj1').value = "61.00";
+        document.getElementById('input-trele').value = "0.30";
+        document.getElementById('input-tint').value = "0.10";
+        document.getElementById('input-fintervalo').value = "0.10";
+        document.getElementById('input-netapas').value = "3";
+        
+        renderAliviosInputs();
+        document.getElementById('input-alivio1').value = "10";
+        document.getElementById('input-alivio2').value = "20";
+        document.getElementById('input-alivio3').value = "20";
+      } else if (type === 5) {
+        tipoSelect.value = 'generacion';
+        cambiarTipoEsquema();
+        
+        document.getElementById('input-f0').value = "60.00";
+        document.getElementById('input-H').value = "3.00";
+        document.getElementById('input-fmin').value = "62.50";
+        document.getElementById('input-faj1').value = "61.00";
+        document.getElementById('input-trele').value = "0.30";
+        document.getElementById('input-tint').value = "0.10";
+        document.getElementById('input-fintervalo').value = "0.10";
+        document.getElementById('input-netapas').value = "4";
+        
+        renderAliviosInputs();
+        document.getElementById('input-alivio1').value = "10";
+        document.getElementById('input-alivio2').value = "15";
+        document.getElementById('input-alivio3').value = "15";
+        document.getElementById('input-alivio4').value = "20";
+      } else if (type === 6) {
+        tipoSelect.value = 'generacion';
+        cambiarTipoEsquema();
+        
+        document.getElementById('input-f0').value = "60.00";
+        document.getElementById('input-H').value = "5.00";
+        document.getElementById('input-fmin').value = "63.00";
+        document.getElementById('input-faj1').value = "61.00";
+        document.getElementById('input-trele').value = "0.30";
+        document.getElementById('input-tint').value = "0.10";
+        document.getElementById('input-fintervalo').value = "0.10";
+        document.getElementById('input-netapas').value = "5";
+        
+        renderAliviosInputs();
+        document.getElementById('input-alivio1').value = "8";
+        document.getElementById('input-alivio2').value = "12";
+        document.getElementById('input-alivio3').value = "15";
+        document.getElementById('input-alivio4').value = "15";
+        document.getElementById('input-alivio5').value = "20";
+      }
+      calcularYMostrar();
+    }
+
+    // Copiar el reporte de simulación al portapapeles
+    function copiarReporte() {
+      const reporte = document.getElementById('reporte-texto');
+      const textToCopy = reporte.innerText;
+      
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        const btn = document.getElementById('btn-copiar-reporte');
+        const oldHtml = btn.innerHTML;
+        btn.innerHTML = "✔ ¡Copiado!";
+        btn.style.borderColor = "var(--success)";
+        btn.style.color = "#56d364";
+        setTimeout(() => {
+          btn.innerHTML = oldHtml;
+          btn.style.borderColor = "";
+          btn.style.color = "";
+        }, 2000);
+      }).catch(err => {
+        console.error("Error al copiar: ", err);
+      });
+    }
+
+    // Exportar tabla a formato CSV
+    function exportarCSV(tableId, filename) {
+      const table = document.getElementById(tableId);
+      let csv = [];
+      const rows = table.querySelectorAll("tr");
+      
+      for (let i = 0; i < rows.length; i++) {
+        const row = [];
+        const cols = rows[i].querySelectorAll("td, th");
+        
+        for (let j = 0; j < cols.length; j++) {
+          let text = cols[j].textContent.trim();
+          text = text.replace(/(\r\n|\n|\r)/gm, " ");
+          text = text.replace(/"/g, '""');
+          row.push('"' + text + '"');
+        }
+        csv.push(row.join(","));
+      }
+      
+      const csvString = "\uFEFF" + csv.join("\n");
+      const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+      
+      const link = document.createElement("a");
+      if (link.download !== undefined) {
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", filename);
+        link.style.visibility = "hidden";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    }
+
+    // Alternar visualización de fórmulas
+    function toggleFormulas() {
+      const content = document.getElementById('formulas-content');
+      const arrow = document.getElementById('formulas-arrow');
+      if (content.style.display === 'none') {
+        content.style.display = 'block';
+        arrow.innerText = '▲';
+      } else {
+        content.style.display = 'none';
+        arrow.innerText = '▼';
+      }
+    }
+
+    // Convertir decimales a porcentajes enteros
+    function intPct(val) {
+      return Math.round(val * 100);
+    }
+
+    // Al cargar la página
+    window.onload = function() {
+      // Registrar eventos del form
+      const inputNetapas = document.getElementById('input-netapas');
+      
+      // Inicializar presets y inputs dinámicos
+      renderPresets();
+      renderAliviosInputs();
+
+      // Recálculo automático al cambiar inputs
+      const form = document.getElementById('premisas-form');
+      form.addEventListener('input', (e) => {
+        if (e.target.id === 'input-netapas') {
+          renderAliviosInputs();
+        } else if (e.target.id !== 'input-tipo-esquema') {
+          calcularYMostrar();
+        }
+      });
+
+      calcularYMostrar();
+    };
+
+    // Renderizar inputs de alivio dinámicamente
+    function renderAliviosInputs() {
+      const tipo = document.getElementById('input-tipo-esquema').value;
+      const netapas = parseInt(document.getElementById('input-netapas').value) || 3;
+      const container = document.getElementById('alivios-container');
+      
+      // Salvar valores previos si son válidos y corresponden al mismo modo
+      const oldVals = {};
+      const lastTipo = container.getAttribute('data-last-tipo');
+      if (lastTipo === tipo) {
+        for (let i = 1; i <= 20; i++) {
+          const input = document.getElementById(`input-alivio${i}`);
+          if (input) oldVals[i] = input.value;
+        }
+      }
+      
+      container.setAttribute('data-last-tipo', tipo);
+      container.innerHTML = "";
+      for (let i = 1; i <= netapas; i++) {
+        const val = oldVals[i] !== undefined ? oldVals[i] : (i === 1 ? 10 : 20);
+        
+        const wrapper = document.createElement('div');
+        wrapper.className = "input-wrapper";
+        
+        const input = document.createElement('input');
+        input.type = "number";
+        input.id = `input-alivio${i}`;
+        input.value = val;
+        input.required = true;
+        input.style.paddingRight = "1.5rem";
+        
+        const badge = document.createElement('span');
+        badge.className = "unit-badge";
+        badge.style.right = "0.4rem";
+        badge.innerText = "%";
+        
+        wrapper.appendChild(input);
+        wrapper.appendChild(badge);
+        container.appendChild(wrapper);
+      }
+
+      // Re-renderizar tabs superiores
+      renderTabs(netapas);
+      
+      // Forzar recálculo
+      calcularYMostrar();
+    }
+
+    // Renderizar pestañas de navegación dinámicamente
+    function renderTabs(netapas) {
+      const tabsNav = document.getElementById('tabs-navigation');
+      tabsNav.innerHTML = "";
+      
+      for (let i = 1; i <= netapas; i++) {
+        const btn = document.createElement('button');
+        btn.id = `tab-btn-${i}`;
+        btn.className = "tab-button" + (currentTab === i ? " active" : "");
+        btn.onclick = () => cambiarTab(i);
+        if (i === netapas) {
+          btn.innerText = "Validación";
+        } else {
+          btn.innerText = `Ajuste Etapa ${i + 1}`;
+        }
+        tabsNav.appendChild(btn);
+      }
+
+      // Botón resumen final
+      const idxResumen = netapas + 1;
+      const btnResumen = document.createElement('button');
+      btnResumen.id = `tab-btn-${idxResumen}`;
+      btnResumen.className = "tab-button" + (currentTab === idxResumen ? " active" : "");
+      btnResumen.onclick = () => cambiarTab(idxResumen);
+      btnResumen.innerText = "Resumen y Ajustes";
+      tabsNav.appendChild(btnResumen);
+
+      if (currentTab > idxResumen) {
+        currentTab = 1;
+      }
+    }
+
+    function cambiarTab(tabIndex) {
+      currentTab = tabIndex;
+      const netapas = parseInt(document.getElementById('input-netapas').value) || 3;
+      
+      for (let i = 1; i <= netapas + 1; i++) {
+        const btn = document.getElementById(`tab-btn-${i}`);
+        if (btn) {
+          btn.classList.toggle('active', i === tabIndex);
+        }
+      }
+
+      actualizarPantalla();
+    }
+
+    // Algoritmo analítico dinámico adaptado (Carga / Generación)
+    function calcularPuntosDeEtapa(tipo, num_etapas_limite, deficit_inicial, f_ajustes, alivios_list, f0, H, T_total) {
+      let puntos = [
+        { id: "O", t: 0.0, f: f0, p: deficit_inicial, desc: "Punto Inicial O" }
+      ];
+
+      for (let i = 1; i <= num_etapas_limite; i++) {
+        // 1. Calcular Ri (Activación)
+        const f_ajuste_i = f_ajustes[i];
+        
+        let left_r = null;
+        let min_f_diff = Infinity;
+        for (let pt of puntos) {
+          if (tipo === 'carga') {
+            if (pt.f >= f_ajuste_i) {
+              let diff = pt.f - f_ajuste_i;
+              if (diff < min_f_diff) {
+                min_f_diff = diff;
+                left_r = pt;
+              }
+            }
+          } else { // generacion
+            if (pt.f <= f_ajuste_i) {
+              let diff = f_ajuste_i - pt.f;
+              if (diff < min_f_diff) {
+                min_f_diff = diff;
+                left_r = pt;
+              }
+            }
+          }
+        }
+        
+        const df_dt_r = (f0 * left_r.p) / (2 * H);
+        const t_ri = left_r.t + (f_ajuste_i - left_r.f) / df_dt_r;
+        
+        puntos.push({
+          id: `R${i}`,
+          t: t_ri,
+          f: f_ajuste_i,
+          p: left_r.p,
+          desc: `R${i} (Activación Etapa ${i})`,
+          orig_id: left_r.id,
+          p_deficit_name: left_r.p
+        });
+
+        // 2. Calcular Di (Deslastre / Rechazo)
+        const t_di = t_ri + T_total;
+        
+        let left_d = null;
+        let max_t = -Infinity;
+        for (let pt of puntos) {
+          if (pt.t <= t_di) {
+            if (pt.t > max_t) {
+              max_t = pt.t;
+              left_d = pt;
+            }
+          }
+        }
+        
+        const df_dt_d = (f0 * left_d.p) / (2 * H);
+        const f_di = left_d.f + df_dt_d * (t_di - left_d.t);
+        
+        // En carga sumamos alivio (+); en generación restamos rechazo (-)
+        const p_after_di = (tipo === 'carga') 
+          ? left_d.p + alivios_list[i]
+          : left_d.p - alivios_list[i];
+        
+        puntos.push({
+          id: `D${i}`,
+          t: t_di,
+          f: f_di,
+          p: p_after_di,
+          desc: (tipo === 'carga') ? `D${i} (Deslastre Etapa ${i})` : `D${i} (Rechazo Etapa ${i})`,
+          orig_id: left_d.id,
+          p_deficit_name: left_d.p
+        });
+      }
+      
+      return puntos;
+    }
+
+    function calcularYMostrar() {
+      const tipo = document.getElementById('input-tipo-esquema').value;
+      const f0 = parseFloat(document.getElementById('input-f0').value);
+      const H = parseFloat(document.getElementById('input-H').value);
+      const f_min_perm = parseFloat(document.getElementById('input-fmin').value);
+      const f_ajuste_1 = parseFloat(document.getElementById('input-faj1').value);
+      
+      const t_rele = parseFloat(document.getElementById('input-trele').value);
+      const t_int = parseFloat(document.getElementById('input-tint').value);
+      const T_total = t_rele + t_int; 
+
+      const f_intervalo = parseFloat(document.getElementById('input-fintervalo').value);
+      const netapas = parseInt(document.getElementById('input-netapas').value) || 3;
+
+      // Alivios
+      const alivios_list = {};
+      for (let i = 1; i <= netapas; i++) {
+        const input = document.getElementById(`input-alivio${i}`);
+        alivios_list[i] = input ? (parseFloat(input.value) / 100.0) : (i === 1 ? 0.1 : 0.2);
+      }
+
+      // --- CÁLCULO ITERATIVO DE LAS ETAPAS ---
+      let f_ajustes = { 1: f_ajuste_1 };
+      let alivio_acumulado = 0;
+      let resultados_etapas = {};
+
+      for (let k = 1; k <= netapas; k++) {
+        alivio_acumulado += alivios_list[k];
+        // Para carga la potencia neta inicial es negativa. Para generación es positiva.
+        const deficit_k = (tipo === 'carga') ? -alivio_acumulado : alivio_acumulado;
+
+        // Calcular puntos de la trayectoria
+        const puntos_k = calcularPuntosDeEtapa(tipo, k, deficit_k, f_ajustes, alivios_list, f0, H, T_total);
+        resultados_etapas[k] = puntos_k;
+
+        // Encontrar frecuencia al operar la etapa
+        const f_dk = puntos_k.find(p => p.id === `D${k}`).f;
+
+        // Siguiente frecuencia de ajuste
+        if (k < netapas) {
+          if (tipo === 'carga') {
+            f_ajustes[k + 1] = parseFloat((f_dk - f_intervalo).toFixed(3));
+          } else {
+            f_ajustes[k + 1] = parseFloat((f_dk + f_intervalo).toFixed(3));
+          }
+        }
+      }
+
+      // El Nadir/Zénit es la frecuencia al operar la última etapa de la última trayectoria
+      const f_extremo = resultados_etapas[netapas].find(p => p.id === `D${netapas}`).f;
+      let f_extremo_check;
+      let es_valido;
+
+      if (tipo === 'carga') {
+        f_extremo_check = parseFloat((f_extremo - f_intervalo).toFixed(3));
+        es_valido = f_extremo_check >= f_min_perm;
+      } else {
+        f_extremo_check = parseFloat((f_extremo + f_intervalo).toFixed(3));
+        es_valido = f_extremo_check <= f_min_perm; // Aquí f_min_perm es la frecuencia máxima permisible!
+      }
+
+      calculations = {
+        inputs: { f0, H, f_min_perm, f_ajuste_1, f_ajustes, T_total, f_intervalo, netapas, alivios_list, tipo },
+        resultados_etapas,
+        f_min_check: f_extremo_check,
+        es_valido
+      };
+
+      actualizarPantalla();
+    }
+
+    // Genera el texto del reporte paso a paso
+    function generarReportePasos(puntosList, inputs, tabIndex, tipo) {
+      let report = "";
+      
+      const order = [];
+      for (let i = 1; i <= tabIndex; i++) {
+        order.push(`R${i}`);
+        order.push(`D${i}`);
+      }
+
+      const puntosCalculados = [];
+      order.forEach(id => {
+        const pt = puntosList.find(p => p.id === id);
+        if (pt) puntosCalculados.push(pt);
+      });
+
+      puntosCalculados.forEach(pt => {
+        const left_pt = puntosList.find(p => p.id === pt.orig_id);
+        const p_val = pt.p_deficit_name;
+        
+        let p_comment = "";
+        if (tabIndex === 1) {
+          p_comment = `(por el ${intPct(inputs.alivios_list[1])}%)` + (pt.id.startsWith("D") ? " (seguimos en primera etapa)" : "");
+        } else {
+          if (pt.id.startsWith("R")) {
+            if (pt.id === "R1") {
+              let total_alivio = 0;
+              for (let i = 1; i <= tabIndex; i++) total_alivio += inputs.alivios_list[i];
+              if (tipo === 'carga') {
+                p_comment = (tabIndex === inputs.netapas) 
+                  ? `(por el peor escenario de deficit, ${intPct(total_alivio)}%)`
+                  : `(por etapas acumuladas, ${intPct(total_alivio)}%)`;
+              } else {
+                p_comment = (tabIndex === inputs.netapas) 
+                  ? `(por el peor escenario de superavit, ${intPct(total_alivio)}%)`
+                  : `(por etapas acumuladas, ${intPct(total_alivio)}%)`;
+              }
+            } else {
+              p_comment = (tipo === 'carga')
+                ? `(por ubicacion sigue en esta etapa, aun no opera el deslastre de la etapa anterior)`
+                : `(por ubicacion sigue en esta etapa, aun no opera el rechazo de la etapa anterior)`;
+            }
+          } else {
+            if (pt.id === `D${tabIndex}`) {
+              p_comment = (tipo === 'carga')
+                ? `(YA SE RECHAZO LA ETAPA ANTERIOR, QUITAMOS EL ALIVIO Y ESTE SERA EL NADIR)`
+                : `(YA SE RECHAZO LA ETAPA ANTERIOR, QUITAMOS LA GENERACION Y ESTE SERA EL ZENIT)`;
+            } else {
+              p_comment = (tipo === 'carga')
+                ? `(YA SE RECHAZÓ LA ETAPA ANTERIOR, QUITAMOS EL ALIVIO EN ESTE TRAMO)`
+                : `(YA SE RECHAZÓ LA ETAPA ANTERIOR, QUITAMOS LA GENERACION EN ESTE TRAMO)`;
+            }
+          }
+        }
+
+        report += `${pt.orig_id} a ${pt.id}:\n`;
+        report += `  I = ${inputs.f0.toFixed(3)}Hz\n`;
+        report += `  H = ${inputs.H.toFixed(3)}\n`;
+        const signStr = (tipo === 'generacion' && p_val > 0) ? "+" : "";
+        report += `  P = ${signStr}${p_val.toFixed(2)} <span class="comment">${p_comment}</span>\n`;
+        report += `  F = ${left_pt.f.toFixed(3)}Hz (frecuencia inicial ${pt.orig_id})\n`;
+        
+        if (pt.id.startsWith("R")) {
+          report += `  G = ${pt.f.toFixed(3)}Hz (la frecuencia en ${pt.id})\n`;
+          report += `  T = ${left_pt.t.toFixed(3)}seg (tiempo de ${pt.orig_id})\n`;
+          report += `  U = tiempo a descubrir -> <span class="result">${pt.t.toFixed(3)}seg</span>\n\n`;
+        } else {
+          report += `  G = <span class="result">${pt.f.toFixed(3)}Hz</span> (la frecuencia en ${pt.id})\n`;
+          report += `  T = ${left_pt.t.toFixed(3)}seg (tiempo de ${pt.orig_id})\n`;
+          report += `  U = ${pt.t.toFixed(3)}seg (tiempo de ${pt.id})\n\n`;
+        }
+      });
+
+      const f_last_d = puntosList.find(p => p.id === `D${tabIndex}`).f;
+
+      if (tabIndex < inputs.netapas) {
+        if (tipo === 'carga') {
+          const f_aj_next = f_last_d - inputs.f_intervalo;
+          report += `Aplicamos el intervalo de frecuencia: ${f_last_d.toFixed(3)}Hz - ${inputs.f_intervalo.toFixed(3)}Hz = <span class="result">${f_aj_next.toFixed(3)}Hz</span>`;
+        } else {
+          const f_aj_next = f_last_d + inputs.f_intervalo;
+          report += `Aplicamos el intervalo de frecuencia: ${f_last_d.toFixed(3)}Hz + ${inputs.f_intervalo.toFixed(3)}Hz = <span class="result">${f_aj_next.toFixed(3)}Hz</span>`;
+        }
+      } else {
+        if (tipo === 'carga') {
+          report += `Aplicamos el intervalo de frecuencia: ${f_last_d.toFixed(3)}Hz - ${inputs.f_intervalo.toFixed(3)}Hz = <span class="result">${calculations.f_min_check.toFixed(3)}Hz</span>\n\n`;
+          report += `COMPROBACION FINAL:\n`;
+          report += `  FREC. MIN = ${calculations.f_min_check.toFixed(3)}Hz\n`;
+          report += `  Como ${calculations.f_min_check.toFixed(3)}Hz ${calculations.es_valido ? '>' : '<'} ${inputs.f_min_perm.toFixed(3)}Hz (${calculations.es_valido ? 'Se respeta la frecuencia minima permisible' : 'NO se respeta la frecuencia minima permisible'}).\n`;
+          report += `  Esquema ${calculations.es_valido ? 'valido. (Check verde ✔)' : 'invalido. (Cruz roja ❌)'}`;
+        } else {
+          report += `Aplicamos el intervalo de frecuencia: ${f_last_d.toFixed(3)}Hz + ${inputs.f_intervalo.toFixed(3)}Hz = <span class="result">${calculations.f_min_check.toFixed(3)}Hz</span>\n\n`;
+          report += `COMPROBACION FINAL:\n`;
+          report += `  FREC. MAX = ${calculations.f_min_check.toFixed(3)}Hz\n`;
+          report += `  Como ${calculations.f_min_check.toFixed(3)}Hz ${calculations.es_valido ? '<=' : '>'} ${inputs.f_min_perm.toFixed(3)}Hz (${calculations.es_valido ? 'Se respeta la frecuencia maxima permisible' : 'NO se respeta la frecuencia maxima permisible'}).\n`;
+          report += `  Esquema ${calculations.es_valido ? 'valido. (Check verde ✔)' : 'invalido. (Cruz roja ❌)'}`;
+        }
+      }
+
+      return report;
+    }
+
+    function actualizarTablasResumen(calculations) {
+      const { inputs, resultados_etapas, tipo } = calculations;
+      const netapas = inputs.netapas;
+
+      // 1. Tabla Ajustes
+      let htmlAjustes = `
+        <thead>
+          <tr>
+            <th>ETAPA</th>
+            <th>Frecuencia (Hz)</th>
+            <th>Tiempo (seg)</th>
+          </tr>
+        </thead>
+        <tbody>
+      `;
+      for (let i = 1; i <= netapas; i++) {
+        htmlAjustes += `
+          <tr>
+            <td style="font-weight:600;">${i}</td>
+            <td>${inputs.f_ajustes[i].toFixed(3)}</td>
+            <td>${inputs.T_total.toFixed(1)}</td>
+          </tr>
+        `;
+      }
+      htmlAjustes += `</tbody>`;
+      document.getElementById('tabla-ajustes').innerHTML = htmlAjustes;
+
+      // 2. Tabla Resumen General
+      let htmlResumen = `
+        <thead>
+          <tr>
+            <th>PROCESO</th>
+            <th>ETAPAS</th>
+            <th>METRICA</th>
+      `;
+      
+      for (let i = 1; i <= netapas; i++) {
+        htmlResumen += `
+          <th>ETAPA ${i} (R${i})</th>
+          <th>ETAPA ${i} (D${i})</th>
+        `;
+      }
+      htmlResumen += `
+          </tr>
+        </thead>
+        <tbody>
+      `;
+
+      const getFVal = (pts, id) => {
+        const p = pts.find(x => x.id === id);
+        return p ? p.f.toFixed(3) : "-";
+      };
+      const getTVal = (pts, id) => {
+        const p = pts.find(x => x.id === id);
+        return p ? p.t.toFixed(3) : "-";
+      };
+
+      for (let k = 1; k <= netapas; k++) {
+        const pts_k = resultados_etapas[k];
+        
+        let procTitle = "";
+        let stagesStr = "";
+        if (k === netapas) {
+          procTitle = (tipo === 'carga') ? "COMPROBACION DE LA MINIMA FRECUENCIA" : "COMPROBACION DE LA MAXIMA FRECUENCIA";
+          let arr = [];
+          for (let s = 1; s <= k; s++) arr.push(s);
+          stagesStr = arr.join(" + ");
+        } else {
+          procTitle = `AJUSTE DE LA ${k+1}A. ETAPA`;
+          let arr = [];
+          for (let s = 1; s <= k; s++) arr.push(s);
+          stagesStr = arr.join(" + ");
+        }
+
+        // Fila de Frecuencia
+        htmlResumen += `
+          <tr>
+            <td rowspan="2" class="row-title">${procTitle}</td>
+            <td rowspan="2" style="font-weight:600;">${stagesStr}</td>
+            <td style="font-weight:700; color: var(--text-bright);">FREC.</td>
+        `;
+        for (let i = 1; i <= netapas; i++) {
+          htmlResumen += `
+            <td>${getFVal(pts_k, `R${i}`)}</td>
+            <td>${getFVal(pts_k, `D${i}`)}</td>
+          `;
+        }
+        htmlResumen += `</tr>`;
+
+        // Fila de Tiempo
+        htmlResumen += `
+          <tr>
+            <td style="font-weight:700; color: var(--text-bright);">TIEMPO</td>
+        `;
+        for (let i = 1; i <= netapas; i++) {
+          htmlResumen += `
+            <td>${getTVal(pts_k, `R${i}`)}</td>
+            <td>${getTVal(pts_k, `D${i}`)}</td>
+          `;
+        }
+        htmlResumen += `</tr>`;
+      }
+
+      htmlResumen += `</tbody>`;
+      document.getElementById('tabla-resumen').innerHTML = htmlResumen;
+    }
+
+    function actualizarPantalla() {
+      if (!calculations) return;
+
+      const { inputs, resultados_etapas, f_min_check, es_valido } = calculations;
+      const netapas = inputs.netapas;
+      const tipo = inputs.tipo;
+      
+      const chartSection = document.getElementById('chart-section');
+      const reportTitleSection = document.getElementById('report-title-section');
+      const reportTexto = document.getElementById('reporte-texto');
+      const resumenSection = document.getElementById('resumen-section');
+      const statusBadge = document.getElementById('status-badge');
+
+      if (currentTab === netapas + 1) {
+        // Vista Resumen
+        chartSection.style.display = 'none';
+        reportTitleSection.style.display = 'none';
+        reportTexto.style.display = 'none';
+        resumenSection.style.display = 'block';
+        
+        actualizarTablasResumen(calculations);
+      } else {
+        // Vista Pestaña Normal (1 a N)
+        chartSection.style.display = 'block';
+        reportTitleSection.style.display = 'flex';
+        reportTexto.style.display = 'block';
+        resumenSection.style.display = 'none';
+
+        const activePuntos = resultados_etapas[currentTab];
+        reportTexto.innerHTML = generarReportePasos(activePuntos, inputs, currentTab, tipo);
+
+        const stagesLines = {};
+        for (let i = 1; i <= currentTab; i++) {
+          stagesLines[i] = inputs.f_ajustes[i];
+        }
+
+        const sortedPuntos = [...activePuntos].sort((a, b) => a.t - b.t);
+        const segments = [];
+        for (let j = 1; j <= currentTab; j++) {
+          const startId = (j === 1) ? "O" : `D${j-1}`;
+          const endId = `D${j}`;
+          
+          const startPt = activePuntos.find(p => p.id === startId);
+          const endPt = activePuntos.find(p => p.id === endId);
+          
+          if (startPt && endPt) {
+            const t_start = startPt.t;
+            const t_end = endPt.t;
+            
+            const segmentPts = sortedPuntos
+              .filter(p => p.t >= t_start && p.t <= t_end)
+              .map(p => ({ x: p.t, y: p.f, desc: p.id }));
+            
+            if (segmentPts.length > 0) {
+              const pctDeficit = Math.abs(startPt.p * 100).toFixed(0);
+              const labelTxt = (tipo === 'carga') 
+                ? `Tramo ${j} (Déficit: ${pctDeficit}%)` 
+                : `Tramo ${j} (Superávit: ${pctDeficit}%)`;
+              
+              segments.push({
+                label: labelTxt,
+                points: segmentPts
+              });
+            }
+          }
+        }
+
+        dibujarGrafico(tipo, segments, stagesLines, inputs.f_min_perm);
+      }
+
+      // Actualizar badge de estado
+      const statusIcon = document.getElementById('status-icon');
+      const statusText = document.getElementById('status-text');
+
+      if (es_valido) {
+        statusBadge.className = "status-badge valid";
+        statusIcon.innerHTML = "✔";
+        if (tipo === 'carga') {
+          statusText.innerHTML = `Esquema válido. Frec. Mínima de seguridad (${f_min_check.toFixed(3)} Hz) es mayor o igual que el límite permitido (${inputs.f_min_perm.toFixed(3)} Hz).`;
+        } else {
+          statusText.innerHTML = `Esquema válido. Frec. Máxima de seguridad (${f_min_check.toFixed(3)} Hz) es menor o igual que el límite permitido (${inputs.f_min_perm.toFixed(3)} Hz).`;
+        }
+      } else {
+        statusBadge.className = "status-badge invalid";
+        statusIcon.innerHTML = "❌";
+        if (tipo === 'carga') {
+          statusText.innerHTML = `Esquema inválido. Frec. Mínima de seguridad (${f_min_check.toFixed(3)} Hz) es menor que el límite permitido (${inputs.f_min_perm.toFixed(3)} Hz).`;
+        } else {
+          statusText.innerHTML = `Esquema inválido. Frec. Máxima de seguridad (${f_min_check.toFixed(3)} Hz) es mayor que el límite permitido (${inputs.f_min_perm.toFixed(3)} Hz).`;
+        }
+      }
+    }
+
+    // Función para renderizar el gráfico en Chart.js
+    function dibujarGrafico(tipo, segments, stagesLines, fLimit) {
+      const ctx = document.getElementById('trayectoriaChart').getContext('2d');
+
+      if (chartInstance) {
+        chartInstance.destroy();
+      }
+
+      const segmentColors = [
+        '#ff7b72', // Rojo brillante
+        '#bc8cff', // Morado
+        '#58a6ff', // Azul
+        '#56d364', // Verde
+        '#d29922', // Amarillo/Naranja
+        '#388bfd', // Azul claro
+        '#f85149', // Rojo oscuro
+        '#aff5b4'  // Verde claro
+      ];
+
+      const datasets = [];
+
+      // 1. Dataset de los tramos
+      segments.forEach((seg, idx) => {
+        const color = segmentColors[idx % segmentColors.length];
+        datasets.push({
+          label: seg.label,
+          data: seg.points,
+          borderColor: color,
+          borderWidth: 3.5,
+          backgroundColor: color,
+          showLine: true,
+          tension: 0,
+          pointRadius: 6,
+          pointHoverRadius: 8,
+          pointBackgroundColor: '#ffffff',
+          pointBorderColor: color,
+          pointBorderWidth: 2,
+          z: 10
+        });
+      });
+
+      const allTimes = [];
+      segments.forEach(seg => seg.points.forEach(p => allTimes.push(p.x)));
+      const tMax = allTimes.length > 0 ? Math.max(...allTimes) : 1.0;
+
+      // 2. Línea de Frecuencia Límite Permisible
+      const limitLabel = (tipo === 'carga') 
+        ? `Frec. Mínima Permisible (${fLimit.toFixed(3)} Hz)` 
+        : `Frec. Máxima Permisible (${fLimit.toFixed(3)} Hz)`;
+
+      datasets.push({
+        label: limitLabel,
+        data: [{ x: -0.02, y: fLimit }, { x: tMax + 0.05, y: fLimit }],
+        borderColor: '#f85149',
+        borderWidth: 2,
+        borderDash: [6, 4],
+        pointRadius: 0,
+        fill: false,
+        showLine: true
+      });
+
+      // 3. Líneas de los relés de ajuste
+      Object.keys(stagesLines).forEach((key, idx) => {
+        const val = stagesLines[key];
+        const color = segmentColors[(idx) % segmentColors.length];
+        datasets.push({
+          label: `Ajuste Etapa ${key} (${val.toFixed(3)} Hz)`,
+          data: [{ x: -0.02, y: val }, { x: tMax + 0.05, y: val }],
+          borderColor: color,
+          borderWidth: 1.5,
+          borderDash: [4, 4],
+          pointRadius: 0,
+          fill: false,
+          showLine: true
+        });
+      });
+
+      // Límites del eje Y según el modo
+      const yMin = (tipo === 'carga') ? 55.0 : 59.5;
+      const yMax = (tipo === 'carga') ? 60.5 : 65.0;
+
+      chartInstance = new Chart(ctx, {
+        type: 'scatter',
+        data: {
+          datasets: datasets
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: {
+            duration: 400
+          },
+          plugins: {
+            legend: {
+              labels: {
+                color: '#c9d1d9',
+                font: {
+                  family: 'Outfit',
+                  size: 11
+                }
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const p = context.raw;
+                  if (p.desc) {
+                    return `${p.desc}: (${p.x.toFixed(3)} s, ${p.y.toFixed(3)} Hz)`;
+                  }
+                  return `(${context.parsed.x.toFixed(3)} s, ${context.parsed.y.toFixed(3)} Hz)`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              type: 'linear',
+              position: 'bottom',
+              min: -0.01,
+              max: tMax + 0.03,
+              grid: {
+                color: 'rgba(48, 54, 61, 0.3)'
+              },
+              ticks: {
+                color: '#8b949e',
+                font: {
+                  family: 'Outfit'
+                }
+              },
+              title: {
+                display: true,
+                text: 'Tiempo (segundos)',
+                color: '#c9d1d9',
+                font: {
+                  family: 'Outfit',
+                  weight: '600'
+                }
+              }
+            },
+            y: {
+              min: yMin,
+              max: yMax,
+              grid: {
+                color: 'rgba(48, 54, 61, 0.3)'
+              },
+              ticks: {
+                color: '#8b949e',
+                font: {
+                  family: 'Outfit'
+                }
+              },
+              title: {
+                display: true,
+                text: 'Frecuencia (Hz)',
+                color: '#c9d1d9',
+                font: {
+                  family: 'Outfit',
+                  weight: '600'
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+  </script>
+</body>
+</html>
