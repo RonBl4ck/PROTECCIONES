@@ -478,13 +478,7 @@
           </div>
         </div>
 
-        <div class="form-group">
-          <label for="input-tint">Tiempo Interruptor (Breaker)</label>
-          <div class="input-wrapper">
-            <input type="number" id="input-tint" step="0.01" value="0.10" required>
-            <span class="unit-badge">s</span>
-          </div>
-        </div>
+
 
         <div class="form-group">
           <label for="input-fintervalo">Intervalo de Frecuencia (Margen)</label>
@@ -687,7 +681,6 @@
         document.getElementById('input-f0').value = "60.00";
         document.getElementById('input-fmin').value = "56.00";
         document.getElementById('input-faj1').value = "59.00";
-        document.getElementById('input-tint').value = "0.10";
         document.getElementById('input-fintervalo').value = "0.10";
         document.getElementById('input-netapas').value = "3";
         
@@ -696,14 +689,17 @@
         document.getElementById('input-alivio1').value = "10";
         document.getElementById('input-H1').value = "3.00";
         document.getElementById('input-trele1').value = "0.30";
+        document.getElementById('input-tint1').value = "0.10";
         
         document.getElementById('input-alivio2').value = "20";
         document.getElementById('input-H2').value = "3.00";
         document.getElementById('input-trele2').value = "0.30";
+        document.getElementById('input-tint2').value = "0.10";
         
         document.getElementById('input-alivio3').value = "20";
         document.getElementById('input-H3').value = "3.00";
         document.getElementById('input-trele3').value = "0.30";
+        document.getElementById('input-tint3').value = "0.10";
       } else if (type === 2) {
         tipoSelect.value = 'carga';
         cambiarTipoEsquema();
@@ -711,7 +707,6 @@
         document.getElementById('input-f0').value = "60.00";
         document.getElementById('input-fmin').value = "56.00";
         document.getElementById('input-faj1').value = "59.00";
-        document.getElementById('input-tint').value = "0.10";
         document.getElementById('input-fintervalo').value = "0.10";
         document.getElementById('input-netapas').value = "4";
         
@@ -720,18 +715,22 @@
         document.getElementById('input-alivio1').value = "10";
         document.getElementById('input-H1').value = "3.00";
         document.getElementById('input-trele1').value = "0.30";
+        document.getElementById('input-tint1').value = "0.10";
         
         document.getElementById('input-alivio2').value = "15";
         document.getElementById('input-H2').value = "3.00";
         document.getElementById('input-trele2').value = "0.30";
+        document.getElementById('input-tint2').value = "0.10";
         
         document.getElementById('input-alivio3').value = "15";
         document.getElementById('input-H3').value = "3.00";
         document.getElementById('input-trele3').value = "0.30";
+        document.getElementById('input-tint3').value = "0.10";
         
         document.getElementById('input-alivio4').value = "20";
         document.getElementById('input-H4').value = "3.00";
         document.getElementById('input-trele4').value = "0.30";
+        document.getElementById('input-tint4').value = "0.10";
       } else if (type === 3) {
         tipoSelect.value = 'carga';
         cambiarTipoEsquema();
@@ -739,7 +738,6 @@
         document.getElementById('input-f0').value = "60.00";
         document.getElementById('input-fmin').value = "56.00";
         document.getElementById('input-faj1').value = "59.00";
-        document.getElementById('input-tint').value = "0.10";
         document.getElementById('input-fintervalo').value = "0.10";
         document.getElementById('input-netapas').value = "5";
         
@@ -749,26 +747,31 @@
         document.getElementById('input-alivio1').value = "8";
         document.getElementById('input-H1').value = "5.00";
         document.getElementById('input-trele1').value = "0.25";
+        document.getElementById('input-tint1').value = "0.08";
         
         // Etapa 2
         document.getElementById('input-alivio2').value = "12";
         document.getElementById('input-H2').value = "4.50";
         document.getElementById('input-trele2').value = "0.30";
+        document.getElementById('input-tint2').value = "0.10";
         
         // Etapa 3
         document.getElementById('input-alivio3').value = "15";
         document.getElementById('input-H3').value = "4.00";
         document.getElementById('input-trele3').value = "0.35";
+        document.getElementById('input-tint3').value = "0.12";
         
         // Etapa 4
         document.getElementById('input-alivio4').value = "15";
         document.getElementById('input-H4').value = "3.50";
         document.getElementById('input-trele4').value = "0.40";
+        document.getElementById('input-tint4').value = "0.14";
         
         // Etapa 5
         document.getElementById('input-alivio5').value = "20";
         document.getElementById('input-H5').value = "3.00";
         document.getElementById('input-trele5').value = "0.45";
+        document.getElementById('input-tint5').value = "0.15";
       } else if (type === 4) {
         tipoSelect.value = 'generacion';
         cambiarTipoEsquema();
@@ -776,7 +779,6 @@
         document.getElementById('input-f0').value = "60.00";
         document.getElementById('input-fmin').value = "62.00";
         document.getElementById('input-faj1').value = "61.00";
-        document.getElementById('input-tint').value = "0.10";
         document.getElementById('input-fintervalo').value = "0.10";
         document.getElementById('input-netapas').value = "3";
         
@@ -785,14 +787,17 @@
         document.getElementById('input-alivio1').value = "10";
         document.getElementById('input-H1').value = "3.00";
         document.getElementById('input-trele1').value = "0.30";
+        document.getElementById('input-tint1').value = "0.10";
         
         document.getElementById('input-alivio2').value = "20";
         document.getElementById('input-H2').value = "3.00";
         document.getElementById('input-trele2').value = "0.30";
+        document.getElementById('input-tint2').value = "0.10";
         
         document.getElementById('input-alivio3').value = "20";
         document.getElementById('input-H3').value = "3.00";
         document.getElementById('input-trele3').value = "0.30";
+        document.getElementById('input-tint3').value = "0.10";
       } else if (type === 5) {
         tipoSelect.value = 'generacion';
         cambiarTipoEsquema();
@@ -800,7 +805,6 @@
         document.getElementById('input-f0').value = "60.00";
         document.getElementById('input-fmin').value = "62.50";
         document.getElementById('input-faj1').value = "61.00";
-        document.getElementById('input-tint').value = "0.10";
         document.getElementById('input-fintervalo').value = "0.10";
         document.getElementById('input-netapas').value = "4";
         
@@ -809,18 +813,22 @@
         document.getElementById('input-alivio1').value = "10";
         document.getElementById('input-H1').value = "3.00";
         document.getElementById('input-trele1').value = "0.30";
+        document.getElementById('input-tint1').value = "0.10";
         
         document.getElementById('input-alivio2').value = "15";
         document.getElementById('input-H2').value = "3.00";
         document.getElementById('input-trele2').value = "0.30";
+        document.getElementById('input-tint2').value = "0.10";
         
         document.getElementById('input-alivio3').value = "15";
         document.getElementById('input-H3').value = "3.00";
         document.getElementById('input-trele3').value = "0.30";
+        document.getElementById('input-tint3').value = "0.10";
         
         document.getElementById('input-alivio4').value = "20";
         document.getElementById('input-H4').value = "3.00";
         document.getElementById('input-trele4').value = "0.30";
+        document.getElementById('input-tint4').value = "0.10";
       } else if (type === 6) {
         tipoSelect.value = 'generacion';
         cambiarTipoEsquema();
@@ -828,7 +836,6 @@
         document.getElementById('input-f0').value = "60.00";
         document.getElementById('input-fmin').value = "63.00";
         document.getElementById('input-faj1').value = "61.00";
-        document.getElementById('input-tint').value = "0.10";
         document.getElementById('input-fintervalo').value = "0.10";
         document.getElementById('input-netapas').value = "5";
         
@@ -838,26 +845,31 @@
         document.getElementById('input-alivio1').value = "8";
         document.getElementById('input-H1').value = "5.00";
         document.getElementById('input-trele1').value = "0.25";
+        document.getElementById('input-tint1').value = "0.08";
         
         // Etapa 2
         document.getElementById('input-alivio2').value = "12";
         document.getElementById('input-H2').value = "4.50";
         document.getElementById('input-trele2').value = "0.30";
+        document.getElementById('input-tint2').value = "0.10";
         
         // Etapa 3
         document.getElementById('input-alivio3').value = "15";
         document.getElementById('input-H3').value = "4.00";
         document.getElementById('input-trele3').value = "0.35";
+        document.getElementById('input-tint3').value = "0.12";
         
         // Etapa 4
         document.getElementById('input-alivio4').value = "15";
         document.getElementById('input-H4').value = "3.50";
         document.getElementById('input-trele4').value = "0.40";
+        document.getElementById('input-tint4').value = "0.14";
         
         // Etapa 5
         document.getElementById('input-alivio5').value = "20";
         document.getElementById('input-H5').value = "3.00";
         document.getElementById('input-trele5').value = "0.45";
+        document.getElementById('input-tint5').value = "0.15";
       }
       calcularYMostrar();
     }
@@ -966,10 +978,12 @@
           const valAlivio = document.getElementById(`input-alivio${i}`);
           const valH = document.getElementById(`input-H${i}`);
           const valTr = document.getElementById(`input-trele${i}`);
+          const valTint = document.getElementById(`input-tint${i}`);
           oldVals[i] = {
             alivio: valAlivio ? valAlivio.value : null,
             H: valH ? valH.value : null,
-            trele: valTr ? valTr.value : null
+            trele: valTr ? valTr.value : null,
+            tint: valTint ? valTint.value : null
           };
         }
       }
@@ -977,11 +991,12 @@
       container.setAttribute('data-last-tipo', tipo);
       
       let html = `
-        <div style="display: grid; grid-template-columns: 50px 1fr 1fr 1fr; gap: 0.5rem; margin-bottom: 0.25rem; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">
+        <div style="display: grid; grid-template-columns: 40px 1fr 1fr 1fr 1fr; gap: 0.4rem; margin-bottom: 0.25rem; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">
           <span>Etapa</span>
           <span>${tipo === 'carga' ? 'Alivio %' : 'Rech. %'}</span>
           <span>Inercia H</span>
           <span>Relé t_r</span>
+          <span>Int. t_i</span>
         </div>
       `;
       
@@ -989,27 +1004,33 @@
         let defAlivio = (i === 1 ? 10 : 20);
         let defH = 3.00;
         let defTr = 0.30;
+        let defTint = 0.10;
         
         if (oldVals[i]) {
           if (oldVals[i].alivio !== null) defAlivio = oldVals[i].alivio;
           if (oldVals[i].H !== null) defH = oldVals[i].H;
           if (oldVals[i].trele !== null) defTr = oldVals[i].trele;
+          if (oldVals[i].tint !== null) defTint = oldVals[i].tint;
         }
         
         html += `
-          <div class="stage-input-row" style="display: grid; grid-template-columns: 50px 1fr 1fr 1fr; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem;">
+          <div class="stage-input-row" style="display: grid; grid-template-columns: 40px 1fr 1fr 1fr 1fr; gap: 0.4rem; align-items: center; margin-bottom: 0.5rem;">
             <span style="font-weight: 700; font-size: 0.85rem; color: var(--text-bright);">#${i}</span>
             <div class="input-wrapper">
-              <input type="number" id="input-alivio${i}" value="${defAlivio}" required style="padding-right: 0.8rem; font-size: 0.9rem;">
-              <span class="unit-badge" style="right: 0.2rem; font-size: 0.7rem;">%</span>
+              <input type="number" id="input-alivio${i}" value="${defAlivio}" required style="padding-right: 0.4rem; font-size: 0.85rem; padding: 0.4rem 0.2rem;">
+              <span class="unit-badge" style="right: 0.2rem; font-size: 0.65rem;">%</span>
             </div>
             <div class="input-wrapper">
-              <input type="number" id="input-H${i}" step="0.01" value="${defH}" required style="padding-right: 0.8rem; font-size: 0.9rem;">
-              <span class="unit-badge" style="right: 0.2rem; font-size: 0.7rem;">s</span>
+              <input type="number" id="input-H${i}" step="0.01" value="${defH}" required style="padding-right: 0.4rem; font-size: 0.85rem; padding: 0.4rem 0.2rem;">
+              <span class="unit-badge" style="right: 0.2rem; font-size: 0.65rem;">s</span>
             </div>
             <div class="input-wrapper">
-              <input type="number" id="input-trele${i}" step="0.01" value="${defTr}" required style="padding-right: 0.8rem; font-size: 0.9rem;">
-              <span class="unit-badge" style="right: 0.2rem; font-size: 0.7rem;">s</span>
+              <input type="number" id="input-trele${i}" step="0.01" value="${defTr}" required style="padding-right: 0.4rem; font-size: 0.85rem; padding: 0.4rem 0.2rem;">
+              <span class="unit-badge" style="right: 0.2rem; font-size: 0.65rem;">s</span>
+            </div>
+            <div class="input-wrapper">
+              <input type="number" id="input-tint${i}" step="0.01" value="${defTint}" required style="padding-right: 0.4rem; font-size: 0.85rem; padding: 0.4rem 0.2rem;">
+              <span class="unit-badge" style="right: 0.2rem; font-size: 0.65rem;">s</span>
             </div>
           </div>
         `;
@@ -1071,7 +1092,7 @@
     }
 
     // Algoritmo analítico dinámico adaptado (Carga / Generación) con H y T_rele variables
-    function calcularPuntosDeEtapa(tipo, num_etapas_limite, deficit_inicial, f_ajustes, alivios_list, H_list, t_rele_list, t_int, f0) {
+    function calcularPuntosDeEtapa(tipo, num_etapas_limite, deficit_inicial, f_ajustes, alivios_list, H_list, t_rele_list, t_int_list, f0) {
       let puntos = [
         { id: "O", t: 0.0, f: f0, p: deficit_inicial, H: H_list[1], desc: "Punto Inicial O" }
       ];
@@ -1117,7 +1138,7 @@
         });
 
         // 2. Calcular Di (Deslastre / Rechazo)
-        const T_total_i = t_rele_list[i] + t_int;
+        const T_total_i = t_rele_list[i] + t_int_list[i];
         const t_di = t_ri + T_total_i;
         
         let left_d = null;
@@ -1162,14 +1183,14 @@
       const f0 = parseFloat(document.getElementById('input-f0').value);
       const f_min_perm = parseFloat(document.getElementById('input-fmin').value);
       const f_ajuste_1 = parseFloat(document.getElementById('input-faj1').value);
-      const t_int = parseFloat(document.getElementById('input-tint').value);
       const f_intervalo = parseFloat(document.getElementById('input-fintervalo').value);
       const netapas = parseInt(document.getElementById('input-netapas').value) || 3;
 
-      // Obtener alivios, inercias H y tiempos de relé por etapa
+      // Obtener alivios, inercias H, tiempos de relé e interruptor por etapa
       const alivios_list = {};
       const H_list = {};
       const t_rele_list = {};
+      const t_int_list = {};
       
       for (let i = 1; i <= netapas; i++) {
         const inputAlivio = document.getElementById(`input-alivio${i}`);
@@ -1180,6 +1201,9 @@
         
         const inputTr = document.getElementById(`input-trele${i}`);
         t_rele_list[i] = inputTr ? parseFloat(inputTr.value) : 0.30;
+
+        const inputTint = document.getElementById(`input-tint${i}`);
+        t_int_list[i] = inputTint ? parseFloat(inputTint.value) : 0.10;
       }
 
       // --- CÁLCULO ITERATIVO DE LAS ETAPAS ---
@@ -1192,7 +1216,7 @@
         const deficit_k = (tipo === 'carga') ? -alivio_acumulado : alivio_acumulado;
 
         // Calcular puntos de la trayectoria
-        const puntos_k = calcularPuntosDeEtapa(tipo, k, deficit_k, f_ajustes, alivios_list, H_list, t_rele_list, t_int, f0);
+        const puntos_k = calcularPuntosDeEtapa(tipo, k, deficit_k, f_ajustes, alivios_list, H_list, t_rele_list, t_int_list, f0);
         resultados_etapas[k] = puntos_k;
 
         // Encontrar frecuencia al operar la etapa
@@ -1221,7 +1245,7 @@
       }
 
       calculations = {
-        inputs: { f0, f_min_perm, f_ajuste_1, f_ajustes, t_int, f_intervalo, netapas, alivios_list, H_list, t_rele_list, tipo },
+        inputs: { f0, f_min_perm, f_ajuste_1, f_ajustes, t_int_list, f_intervalo, netapas, alivios_list, H_list, t_rele_list, tipo },
         resultados_etapas,
         f_min_check: f_extremo_check,
         es_valido
@@ -1299,10 +1323,10 @@
         } else {
           const stageIdx = parseInt(pt.id.substring(1));
           const t_rele_stage = inputs.t_rele_list[stageIdx];
-          const t_int_global = inputs.t_int;
+          const t_int_stage = inputs.t_int_list[stageIdx];
           report += `  G = <span class="result">${pt.f.toFixed(3)}Hz</span> (la frecuencia en ${pt.id})\n`;
           report += `  T = ${left_pt.t.toFixed(3)}seg (tiempo de ${pt.orig_id})\n`;
-          report += `  U = ${pt.t.toFixed(3)}seg (tiempo de ${pt.id} = disparo + ${t_rele_stage.toFixed(2)}s relé + ${t_int_global.toFixed(2)}s interruptor)\n\n`;
+          report += `  U = ${pt.t.toFixed(3)}seg (tiempo de ${pt.id} = disparo + ${t_rele_stage.toFixed(2)}s relé + ${t_int_stage.toFixed(2)}s interruptor)\n\n`;
         }
       });
 
@@ -1354,14 +1378,14 @@
         <tbody>
       `;
       for (let i = 1; i <= netapas; i++) {
-        const t_total_stage = inputs.t_rele_list[i] + inputs.t_int;
+        const t_total_stage = inputs.t_rele_list[i] + inputs.t_int_list[i];
         htmlAjustes += `
           <tr>
             <td style="font-weight:600;">${i}</td>
             <td>${inputs.f_ajustes[i].toFixed(3)}</td>
             <td>${inputs.H_list[i].toFixed(2)}</td>
             <td>${inputs.t_rele_list[i].toFixed(2)}</td>
-            <td>${inputs.t_int.toFixed(2)}</td>
+            <td>${inputs.t_int_list[i].toFixed(2)}</td>
             <td>${t_total_stage.toFixed(2)}</td>
           </tr>
         `;
